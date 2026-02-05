@@ -8,5 +8,9 @@ pub fn main() !void {
 
     const allocator = arena.allocator();
 
-    var canvas = try Canvas.init(allocator, 10, 10);
+    var canvas = try Canvas.init(allocator, 10, 20);
+
+    const canvas_ppm = try canvas.toPPM(allocator);
+
+    std.debug.print("{s}", .{canvas_ppm});
 }
