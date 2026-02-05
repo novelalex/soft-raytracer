@@ -42,13 +42,17 @@ pub const Canvas = struct {
         errdefer ppm_body.deinit();
 
         // TODO:(Novel) print ppm body
-        //var width_counter = 0;
+
+        // This should reset on new line.
+        var width_counter = 0;
         for (self.buffer) |c| {
             const r = std.math.clamp(std.math.round(c.rgba.r), 0, 255);
+            var buf: [4]u8 = undefined;
+            std.fmt.bufPrint(buf, "{d}", .{r});
+
             const g = std.math.clamp(std.math.round(c.rgba.g), 0, 255);
             const b = std.math.clamp(std.math.round(c.rgba.b), 0, 255);
-
-            //var buf: [32]u8 = undefined;
+            var buf: [32]u8 = undefined;
 
             ppm_body.print(allocator, "{} {d} {d}", .{ r, g, b });
         }
