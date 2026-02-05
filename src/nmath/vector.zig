@@ -9,9 +9,7 @@ pub const Vec4 = struct {
     z: f32,
     w: f32,
 
-    const Self = @This();
-
-    pub fn init(x: f32, y: f32, z: f32, w: f32) Self {
+    pub fn init(x: f32, y: f32, z: f32, w: f32) Vec4 {
         return .{
             .x = x,
             .y = y,
@@ -20,7 +18,7 @@ pub const Vec4 = struct {
         };
     }
 
-    pub fn point(x: f32, y: f32, z: f32) Self {
+    pub fn point(x: f32, y: f32, z: f32) Vec4 {
         return .{
             .x = x,
             .y = y,
@@ -29,7 +27,7 @@ pub const Vec4 = struct {
         };
     }
 
-    pub fn vector(x: f32, y: f32, z: f32) Self {
+    pub fn vector(x: f32, y: f32, z: f32) Vec4 {
         return .{
             .x = x,
             .y = y,
@@ -38,16 +36,16 @@ pub const Vec4 = struct {
         };
     }
 
-    pub fn isPoint(self: Self) bool {
+    pub fn isPoint(self: Vec4) bool {
         return self.w == 1;
     }
 
-    pub fn isVector(self: Self) bool {
+    pub fn isVector(self: Vec4) bool {
         return self.w == 0;
     }
 
     const epsilon = 1e-6;
-    pub fn approxEq(self: Self, other: Self) bool {
+    pub fn approxEq(self: Vec4, other: Vec4) bool {
         return math.approxEqAbs(f32, self.x, other.x, epsilon) and
             math.approxEqAbs(f32, self.y, other.y, epsilon) and
             math.approxEqAbs(f32, self.z, other.z, epsilon) and
@@ -57,7 +55,7 @@ pub const Vec4 = struct {
     // comptime could be used to do component wise operators but
     // "Simple is better than complex." - The Zen of Python
 
-    pub fn add(self: Self, other: Self) Self {
+    pub fn add(self: Vec4, other: Vec4) Vec4 {
         return .{
             .x = self.x + other.x,
             .y = self.y + other.y,
@@ -66,7 +64,7 @@ pub const Vec4 = struct {
         };
     }
 
-    pub fn sub(self: Self, other: Self) Self {
+    pub fn sub(self: Vec4, other: Vec4) Vec4 {
         return .{
             .x = self.x - other.x,
             .y = self.y - other.y,
@@ -75,7 +73,7 @@ pub const Vec4 = struct {
         };
     }
 
-    pub fn negate(self: Self) Self {
+    pub fn negate(self: Vec4) Vec4 {
         return .{
             .x = -self.x,
             .y = -self.y,
@@ -84,7 +82,7 @@ pub const Vec4 = struct {
         };
     }
 
-    pub fn mult(self: Self, scalar: f32) Self {
+    pub fn mult(self: Vec4, scalar: f32) Vec4 {
         return .{
             .x = self.x * scalar,
             .y = self.y * scalar,
@@ -93,7 +91,7 @@ pub const Vec4 = struct {
         };
     }
 
-    pub fn div(self: Self, scalar: f32) Self {
+    pub fn div(self: Vec4, scalar: f32) Vec4 {
         return .{
             .x = self.x / scalar,
             .y = self.y / scalar,
@@ -102,21 +100,21 @@ pub const Vec4 = struct {
         };
     }
 
-    pub fn magnitude(self: Self) f32 {
+    pub fn magnitude(self: Vec4) f32 {
         return math.sqrt(self.x * self.x +
             self.y * self.y +
             self.z * self.z +
             self.w * self.w);
     }
 
-    pub fn magnitudeSquared(self: Self) f32 {
+    pub fn magnitudeSquared(self: Vec4) f32 {
         return self.x * self.x +
             self.y * self.y +
             self.z * self.z +
             self.w * self.w;
     }
 
-    pub fn normalize(self: Self) Self {
+    pub fn normalize(self: Vec4) Vec4 {
         const mag = self.magnitude();
         return .{
             .x = self.x / mag,
@@ -127,7 +125,7 @@ pub const Vec4 = struct {
     }
 
     /// We should only be using dot and cross product on vectors and not points.
-    pub fn dot(self: Self, other: Self) f32 {
+    pub fn dot(self: Vec4, other: Vec4) f32 {
         return self.x * other.x +
             self.y * other.y +
             self.z * other.z +
@@ -135,7 +133,7 @@ pub const Vec4 = struct {
     }
 
     /// 3D cross product, w is dropped
-    pub fn cross(self: Self, other: Self) Self {
+    pub fn cross(self: Vec4, other: Vec4) Vec4 {
         return .{
             .x = self.y * other.z - self.z * other.y,
             .y = self.z * other.x - self.x * other.z,

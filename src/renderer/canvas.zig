@@ -6,9 +6,7 @@ pub const Canvas = struct {
     height: usize,
     buffer: []Color,
 
-    const Self = @This();
-
-    pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Self {
+    pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Canvas {
         const buffer_size = width * height;
         const buffer = try allocator.alloc(Color, buffer_size);
 
@@ -23,15 +21,15 @@ pub const Canvas = struct {
         };
     }
 
-    pub fn deinit(self: *Self, allocator: std.mem.Allocator) void {
+    pub fn deinit(self: *Canvas, allocator: std.mem.Allocator) void {
         allocator.free(self.buffer);
     }
 
-    pub fn pixelAt(self: Self, x: usize, y: usize) Color {
+    pub fn pixelAt(self: Canvas, x: usize, y: usize) Color {
         return self.buffer[y * self.width + x];
     }
 
-    pub fn writePixel(self: *Self, x: usize, y: usize, color: Color) void {
+    pub fn writePixel(self: *Canvas, x: usize, y: usize, color: Color) void {
         self.buffer[y * self.width + x] = color;
     }
 };

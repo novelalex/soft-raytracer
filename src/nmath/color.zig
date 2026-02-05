@@ -1,3 +1,5 @@
+const std = @import("std");
+const Writer = std.Io.Writer;
 const vector = @import("vector.zig");
 
 pub const Color = union {
@@ -9,13 +11,15 @@ pub const Color = union {
     },
     vec: vector.Vec4,
 
-    const Self = @This();
-
     pub fn init(r: f32, g: f32, b: f32) Color {
         return .{ .rgba = .{ .r = r, .g = g, .b = b, .a = 1 } };
     }
 
-    pub fn hadamard_product(self: Self, other: Self) Color {
+    pub fn format(self: Color, writer: *Writer) !void {
+        try writer.print("Color({d}, {d}, {d})", .{ self.rgba.r, self.rgba.g, self.rgba.b });
+    }
+
+    pub fn hadamard_product(self: Color, other: Color) Color {
         return .{
             .rgba = .{
                 .r = self.rgba.r * other.rgba.r,
