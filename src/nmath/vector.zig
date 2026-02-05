@@ -3,7 +3,7 @@ const math = std.math;
 const testing = std.testing;
 /// A 4D Vector used for points and directions
 /// ... and colors.
-pub const Vec4 = struct {
+pub const Vec4 = extern struct {
     x: f32,
     y: f32,
     z: f32,
@@ -139,6 +139,16 @@ pub const Vec4 = struct {
             .y = self.z * other.x - self.x * other.z,
             .z = self.x * other.y - self.y * other.x,
             .w = 0,
+        };
+    }
+
+    pub inline fn at(self: Vec4, i: usize) f32 {
+        return switch (i) {
+            0 => self.x,
+            1 => self.y,
+            2 => self.z,
+            3 => self.w,
+            else => unreachable,
         };
     }
 };

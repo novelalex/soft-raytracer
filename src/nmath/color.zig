@@ -2,8 +2,8 @@ const std = @import("std");
 const Writer = std.Io.Writer;
 const vector = @import("vector.zig");
 
-pub const Color = union {
-    rgba: struct {
+pub const Color = extern union {
+    rgba: extern struct {
         r: f32,
         g: f32,
         b: f32,

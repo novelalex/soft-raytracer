@@ -38,26 +38,40 @@ pub const Canvas = struct {
     }
 
     fn constructPPMBody(self: Canvas, allocator: std.mem.Allocator) ![]u8 {
-        var ppm_body: std.ArrayList(u8) = std.ArrayList(u8).init(allocator);
-        errdefer ppm_body.deinit();
+        var ppm_body: std.ArrayList(u8) = .empty;
+        errdefer ppm_body.deinit(allocator);
 
         // TODO:(Novel) print ppm body
 
         // This should reset on new line.
-        var width_counter = 0;
-        for (self.buffer) |c| {
-            const r = std.math.clamp(std.math.round(c.rgba.r), 0, 255);
-            var buf: [4]u8 = undefined;
-            std.fmt.bufPrint(buf, "{d}", .{r});
+        var width_counter: usize = 0;
 
-            const g = std.math.clamp(std.math.round(c.rgba.g), 0, 255);
-            const b = std.math.clamp(std.math.round(c.rgba.b), 0, 255);
-            var buf: [32]u8 = undefined;
+        var color_channel: u8 = 0;
+        var digit_buffer: [4]u8 = undefined;
+        var digit_count: usize = 0;
 
-            ppm_body.print(allocator, "{} {d} {d}", .{ r, g, b });
+        for (self.buffer, 0..) |c, i| {
+            inline for (0..3) |j| {
+                color_channel = @intFromFloat(std.math.clamp(std.math.round(c.vec.at(j) * 255), 0, 255));
+                const written_slice = try std.fmt.bufPrint(&digit_buffer, "{d}", .{color_channel});
+                digit_count = written_slice.len;
+                width_counter += digit_count;
+                if (width_counter > 70) {
+                    width_counter = digit_count;
+                    try ppm_body.print(allocator, "\n", .{});
+                }
+
+                try ppm_body.print(allocator, "{s}", .{written_slice});
+                if (i < self.buffer.len) {
+                    width_counter += 1;
+                    try ppm_body.print(allocator, " ", .{});
+                } else {
+                    try ppm_body.print(allocator, "\n\n", .{});
+                }
+            }
         }
 
-        return ppm_body.toOwnedSlice();
+        return ppm_body.toOwnedSlice(allocator);
     }
 
     pub fn toPPM(self: Canvas, allocator: std.mem.Allocator) ![]u8 {

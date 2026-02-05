@@ -10,7 +10,10 @@ pub fn main() !void {
 
     var canvas = try Canvas.init(allocator, 10, 20);
 
+    canvas.writePixel(5, 5, Color.init(1, 0, 0));
+
     const canvas_ppm = try canvas.toPPM(allocator);
 
-    std.debug.print("{s}", .{canvas_ppm});
+    //std.debug.print("{s}", .{canvas_ppm});
+    _ = try std.fs.File.stdout().write(canvas_ppm);
 }
