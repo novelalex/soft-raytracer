@@ -41,35 +41,37 @@ pub const Canvas = struct {
         var ppm_body: std.ArrayList(u8) = .empty;
         errdefer ppm_body.deinit(allocator);
 
-        // TODO:(Novel) print ppm body
-
-        // This should reset on new line.
         var width_counter: usize = 0;
-
-        var color_channel: u8 = 0;
         var digit_buffer: [4]u8 = undefined;
-        var digit_count: usize = 0;
 
-        for (self.buffer, 0..) |c, i| {
+        var at_line_start = true;
+        for (self.buffer) |c| {
             inline for (0..3) |j| {
-                color_channel = @intFromFloat(std.math.clamp(std.math.round(c.vec.at(j) * 255), 0, 255));
-                const written_slice = try std.fmt.bufPrint(&digit_buffer, "{d}", .{color_channel});
-                digit_count = written_slice.len;
-                width_counter += digit_count;
-                if (width_counter > 70) {
-                    width_counter = digit_count;
+                const color_channel: u8 = @intFromFloat(
+                    std.math.clamp(std.math.round(c.vec.at(j) * 255), 0, 255),
+                );
+                const written_slice =
+                    try std.fmt.bufPrint(&digit_buffer, "{d}", .{color_channel});
+
+                const width_needed = written_slice.len + @intFromBool(!at_line_start);
+
+                if (width_counter + width_needed > 70) {
                     try ppm_body.print(allocator, "\n", .{});
+                    width_counter = 0;
+                    at_line_start = true;
+                }
+
+                if (!at_line_start) {
+                    try ppm_body.print(allocator, " ", .{});
                 }
 
                 try ppm_body.print(allocator, "{s}", .{written_slice});
-                if (i < self.buffer.len) {
-                    width_counter += 1;
-                    try ppm_body.print(allocator, " ", .{});
-                } else {
-                    try ppm_body.print(allocator, "\n\n", .{});
-                }
+                width_counter += width_needed;
+                at_line_start = false;
             }
         }
+
+        try ppm_body.print(allocator, "\n\n", .{});
 
         return ppm_body.toOwnedSlice(allocator);
     }
