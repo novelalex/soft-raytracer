@@ -18,3 +18,7 @@ pub fn main() !void {
     //std.debug.print("{s}", .{canvas_ppm});
     _ = try std.fs.File.stdout().write(canvas_ppm);
 }
+
+test {
+    _ = @import("nmath/math_tests.zig");
+}

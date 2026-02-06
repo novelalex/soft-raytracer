@@ -1,6 +1,8 @@
 const std = @import("std");
 const math = std.math;
 const testing = std.testing;
+
+const constants = @import("constants.zig");
 /// A 4D Vector used for points and directions
 /// ... and colors.
 pub const Vec4 = extern struct {
@@ -44,12 +46,11 @@ pub const Vec4 = extern struct {
         return self.w == 0;
     }
 
-    const epsilon = 1e-6;
     pub fn approxEq(self: Vec4, other: Vec4) bool {
-        return math.approxEqAbs(f32, self.x, other.x, epsilon) and
-            math.approxEqAbs(f32, self.y, other.y, epsilon) and
-            math.approxEqAbs(f32, self.z, other.z, epsilon) and
-            math.approxEqAbs(f32, self.w, other.w, epsilon);
+        return math.approxEqAbs(f32, self.x, other.x, constants.epsilon) and
+            math.approxEqAbs(f32, self.y, other.y, constants.epsilon) and
+            math.approxEqAbs(f32, self.z, other.z, constants.epsilon) and
+            math.approxEqAbs(f32, self.w, other.w, constants.epsilon);
     }
 
     // comptime could be used to do component wise operators but
