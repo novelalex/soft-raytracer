@@ -103,3 +103,46 @@ test "Transform:rotate_x rotates a point around the x axis" {
     try std.testing.expect(vec.approxEq(matrix.mat4MultiplyVec(half_quarter, p), vec.point(0, @sqrt(2.0) / 2.0, @sqrt(2.0) / 2.0)));
     try std.testing.expect(vec.approxEq(matrix.mat4MultiplyVec(full_quarter, p), vec.point(0, 0, 1)));
 }
+
+test "Transform:rotate_y rotates a point around the y axis" {
+    const p = vec.point(0, 0, 1);
+    const half_quarter = rotation_y(constants.pi / 4.0);
+    const full_quarter = rotation_y(constants.pi / 2.0);
+    try std.testing.expect(vec.approxEq(matrix.mat4MultiplyVec(half_quarter, p), vec.point(@sqrt(2.0) / 2.0, 0, @sqrt(2.0) / 2.0)));
+    try std.testing.expect(vec.approxEq(matrix.mat4MultiplyVec(full_quarter, p), vec.point(1, 0, 0)));
+}
+
+test "Transform:rotate_z rotates a point around the z axis" {
+    const p = vec.point(0, 1, 0);
+    const half_quarter = rotation_z(constants.pi / 4.0);
+    const full_quarter = rotation_z(constants.pi / 2.0);
+    try std.testing.expect(vec.approxEq(matrix.mat4MultiplyVec(half_quarter, p), vec.point(-@sqrt(2.0) / 2.0, @sqrt(2.0) / 2.0, 0.0)));
+    try std.testing.expect(vec.approxEq(matrix.mat4MultiplyVec(full_quarter, p), vec.point(-1, 0, 0)));
+}
+
+pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) matrix.Mat4 {
+    return .{
+        1,  xy, xz, 0,
+        yx, 1,  yz, 0,
+        zx, zy, 1,  0,
+        0,  0,  0,  1,
+    };
+}
+
+test "Transform:shearing works" {
+    const cases = .{
+        .{ .{ 1, 0, 0, 0, 0, 0 }, .{ 5, 3, 4 } },
+        .{ .{ 0, 1, 0, 0, 0, 0 }, .{ 6, 3, 4 } },
+        .{ .{ 0, 0, 1, 0, 0, 0 }, .{ 2, 5, 4 } },
+        .{ .{ 0, 0, 0, 1, 0, 0 }, .{ 2, 7, 4 } },
+        .{ .{ 0, 0, 0, 0, 1, 0 }, .{ 2, 3, 6 } },
+        .{ .{ 0, 0, 0, 0, 0, 1 }, .{ 2, 3, 7 } },
+    };
+
+    inline for (cases) |c| {
+        const t = shearing(c[0][0], c[0][1], c[0][2], c[0][3], c[0][4], c[0][5]);
+        const p = vec.point(2, 3, 4);
+        const expected = vec.point(c[1][0], c[1][1], c[1][2]);
+        try std.testing.expect(vec.approxEq(matrix.mat4MultiplyVec(t, p), expected));
+    }
+}
