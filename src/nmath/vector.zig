@@ -6,8 +6,10 @@ const testing = std.testing;
 const constants = @import("constants.zig");
 /// A 4D Vector used for points and directions and colors.
 pub const Vec4 = @Vector(4, f32);
+pub const Point = Vec4;
+pub const Vector = Vec4;
 
-pub const Vec3 = @Vector(3, f32);
+//pub const Vec3 = @Vector(3, f32);
 
 pub fn x(v: Vec4) f32 {
     return v[0];
@@ -38,7 +40,7 @@ pub fn isVector(v: Vec4) bool {
     return v[3] == 0;
 }
 
-pub fn vec3(v: Vec4) Vec3 {
+pub fn vec3(v: Vec4) @Vector(3, f32) {
     return .{ v[0], v[1], v[2] };
 }
 

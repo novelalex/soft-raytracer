@@ -63,18 +63,11 @@ pub const Quaternion = struct {
         const rotation_axis = vec.vec3(vec.normalize(axis));
         const cos_value = std.math.cos(theta / 2.0);
         const sin_value = std.math.sin(theta / 2.0);
-        const result = Quaternion.init(cos_value, rotation_axis * @as(vec.Vec3, @splat(sin_value)));
+        const result = Quaternion.init(cos_value, rotation_axis * @as(@Vector(3, f32), @splat(sin_value)));
         return result.normalize();
     }
 
     pub fn toMatrix(q: Quaternion) matrix.Mat4 {
-        // return matrix.mat4Transpose(matrix.Mat4{
-        //     (1.0 - 2.0 * q.ijk[1] * q.ijk[1] - 2.0 * q.ijk[2] * q.ijk[2]), (2.0 * q.ijk[0] * q.ijk[1] + 2.0 * q.ijk[2] * q.w),            (2.0 * q.ijk[0] * q.ijk[2] - 2.0 * q.ijk[1] * q.w),            0.0,
-        //     (2.0 * q.ijk[0] * q.ijk[1] - 2.0 * q.ijk[2] * q.w),            (1.0 - 2.0 * q.ijk[0] * q.ijk[0] - 2.0 * q.ijk[2] * q.ijk[2]), (2.0 * q.ijk[1] * q.ijk[2] + 2.0 * q.ijk[0] * q.w),            0.0,
-        //     (2.0 * q.ijk[0] * q.ijk[2] + 2.0 * q.ijk[1] * q.w),            (2.0 * q.ijk[1] * q.ijk[2] - 2 * q.ijk[0] * q.w),              (1.0 - 2.0 * q.ijk[0] * q.ijk[0] - 2.0 * q.ijk[1] * q.ijk[1]), 0.0,
-        //     0.0,                                                           0.0,                                                           0.0,                                                           1.0,
-        // });
-
         return matrix.Mat4{
             (1.0 - 2.0 * q.ijk[1] * q.ijk[1] - 2.0 * q.ijk[2] * q.ijk[2]), (2.0 * q.ijk[0] * q.ijk[1] - 2.0 * q.ijk[2] * q.w),            (2.0 * q.ijk[0] * q.ijk[2] + 2.0 * q.ijk[1] * q.w),            0.0,
             (2.0 * q.ijk[0] * q.ijk[1] + 2.0 * q.ijk[2] * q.w),            (1.0 - 2.0 * q.ijk[0] * q.ijk[0] - 2.0 * q.ijk[2] * q.ijk[2]), (2.0 * q.ijk[1] * q.ijk[2] - 2 * q.ijk[0] * q.w),              0.0,
