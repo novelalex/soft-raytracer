@@ -7,6 +7,8 @@ const constants = @import("constants.zig");
 /// A 4D Vector used for points and directions and colors.
 pub const Vec4 = @Vector(4, f32);
 
+pub const Vec3 = @Vector(3, f32);
+
 pub fn x(v: Vec4) f32 {
     return v[0];
 }
@@ -36,9 +38,18 @@ pub fn isVector(v: Vec4) bool {
     return v[3] == 0;
 }
 
-pub const Fmt = std.fmt.Alt(Vec4, format);
+pub fn vec3(v: Vec4) Vec3 {
+    return .{ v[0], v[1], v[2] };
+}
+
+pub const FmtVec4 = std.fmt.Alt(Vec4, format);
 fn format(v: Vec4, wr: *std.Io.Writer) !void {
     try wr.print("{d} {d} {d}", .{ v[0], v[1], v[2] });
+}
+pub fn fmt(v: Vec4) FmtVec4 {
+    return .{
+        .data = v,
+    };
 }
 
 pub fn approxEq(lhs: Vec4, rhs: Vec4) bool {
@@ -58,9 +69,9 @@ pub fn magnitudeSquared(v: Vec4) f32 {
 }
 
 pub fn normalize(v: Vec4) Vec4 {
-    std.debug.assert(std.math.approxEqAbs(f32, magnitude(v), 0, constants.epsilon));
+    std.debug.assert(!std.math.approxEqAbs(f32, magnitude(v), 0, constants.epsilon));
 
-    const mag: Vec4 = @splat(v.magnitude());
+    const mag: Vec4 = @splat(magnitude(v));
     return v / mag;
 }
 
