@@ -1,6 +1,6 @@
 const std = @import("std");
 const Canvas = @import("renderer/canvas.zig").Canvas;
-const Color = @import("nmath/color.zig").Color;
+const color = @import("nmath/color.zig");
 const Vec4 = @import("nmath/vector.zig").Vec4;
 
 pub fn main() !void {
@@ -11,7 +11,7 @@ pub fn main() !void {
 
     var canvas = try Canvas.init(allocator, 10, 10);
 
-    //canvas.writePixel(5, 5, Color.init(1, 0, 0));
+    canvas.writePixel(5, 5, color.init(1, 0, 0));
 
     const canvas_ppm = try canvas.toPPM(allocator);
 

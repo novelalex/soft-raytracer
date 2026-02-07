@@ -1,17 +1,17 @@
 const std = @import("std");
-const Color = @import("../nmath/color.zig").Color;
+const color = @import("../nmath/color.zig");
 
 pub const Canvas = struct {
     width: usize,
     height: usize,
-    buffer: []Color,
+    buffer: []color.Color,
 
     pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Canvas {
         const buffer_size = width * height;
-        const buffer = try allocator.alloc(Color, buffer_size);
+        const buffer = try allocator.alloc(color.Color, buffer_size);
 
         for (buffer) |*p| {
-            p.* = Color.init(0, 0, 0);
+            p.* = color.init(0, 0, 0);
         }
 
         return .{
@@ -25,12 +25,12 @@ pub const Canvas = struct {
         allocator.free(self.buffer);
     }
 
-    pub fn pixelAt(self: Canvas, x: usize, y: usize) Color {
+    pub fn pixelAt(self: Canvas, x: usize, y: usize) color.Color {
         return self.buffer[y * self.width + x];
     }
 
-    pub fn writePixel(self: *Canvas, x: usize, y: usize, color: Color) void {
-        self.buffer[y * self.width + x] = color;
+    pub fn writePixel(self: *Canvas, x: usize, y: usize, col: color.Color) void {
+        self.buffer[y * self.width + x] = col;
     }
 
     fn constructPPMHeader(self: Canvas, allocator: std.mem.Allocator) ![]u8 {
@@ -48,7 +48,7 @@ pub const Canvas = struct {
         for (self.buffer) |c| {
             inline for (0..3) |j| {
                 const color_channel: u8 = @intFromFloat(
-                    std.math.clamp(std.math.round(c.vec.at(j) * 255), 0, 255),
+                    std.math.clamp(std.math.round(c[j] * 255), 0, 255),
                 );
                 const written_slice =
                     try std.fmt.bufPrint(&digit_buffer, "{d}", .{color_channel});

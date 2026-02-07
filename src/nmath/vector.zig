@@ -1,155 +1,80 @@
 const std = @import("std");
+const builtin = @import("builtin");
 const math = std.math;
 const testing = std.testing;
 
 const constants = @import("constants.zig");
-/// A 4D Vector used for points and directions
-/// ... and colors.
-pub const Vec4 = extern struct {
-    x: f32,
-    y: f32,
-    z: f32,
-    w: f32,
+/// A 4D Vector used for points and directions and colors.
+pub const Vec4 = @Vector(4, f32);
 
-    pub fn init(x: f32, y: f32, z: f32, w: f32) Vec4 {
-        return .{
-            .x = x,
-            .y = y,
-            .z = z,
-            .w = w,
-        };
-    }
+pub fn x(v: Vec4) f32 {
+    return v[0];
+}
+pub fn y(v: Vec4) f32 {
+    return v[1];
+}
+pub fn z(v: Vec4) f32 {
+    return v[2];
+}
+pub fn w(v: Vec4) f32 {
+    return v[3];
+}
 
-    pub fn point(x: f32, y: f32, z: f32) Vec4 {
-        return .{
-            .x = x,
-            .y = y,
-            .z = z,
-            .w = 1,
-        };
-    }
+pub fn point(_x: f32, _y: f32, _z: f32) Vec4 {
+    return .{ _x, _y, _z, 1 };
+}
 
-    pub fn vector(x: f32, y: f32, z: f32) Vec4 {
-        return .{
-            .x = x,
-            .y = y,
-            .z = z,
-            .w = 0,
-        };
-    }
+pub fn vector(_x: f32, _y: f32, _z: f32) Vec4 {
+    return .{ _x, _y, _z, 0 };
+}
 
-    pub fn isPoint(self: Vec4) bool {
-        return self.w == 1;
-    }
+pub fn isPoint(v: Vec4) bool {
+    return v[3] == 1;
+}
 
-    pub fn isVector(self: Vec4) bool {
-        return self.w == 0;
-    }
+pub fn isVector(v: Vec4) bool {
+    return v[3] == 0;
+}
 
-    pub fn approxEq(self: Vec4, other: Vec4) bool {
-        return math.approxEqAbs(f32, self.x, other.x, constants.epsilon) and
-            math.approxEqAbs(f32, self.y, other.y, constants.epsilon) and
-            math.approxEqAbs(f32, self.z, other.z, constants.epsilon) and
-            math.approxEqAbs(f32, self.w, other.w, constants.epsilon);
-    }
+pub const Fmt = std.fmt.Alt(Vec4, format);
+fn format(v: Vec4, wr: *std.Io.Writer) !void {
+    try wr.print("{d} {d} {d}", .{ v[0], v[1], v[2] });
+}
 
-    // comptime could be used to do component wise operators but
-    // "Simple is better than complex." - The Zen of Python
+pub fn approxEq(lhs: Vec4, rhs: Vec4) bool {
+    return @reduce(.And, @abs(lhs - rhs) < @as(Vec4, @splat(constants.epsilon)));
+}
 
-    pub fn add(self: Vec4, other: Vec4) Vec4 {
-        return .{
-            .x = self.x + other.x,
-            .y = self.y + other.y,
-            .z = self.z + other.z,
-            .w = self.w + other.w,
-        };
-    }
+pub fn approxZero(v: Vec4) bool {
+    return @reduce(.And, @abs(v) < @as(Vec4, @splat(constants.epsilon)));
+}
 
-    pub fn sub(self: Vec4, other: Vec4) Vec4 {
-        return .{
-            .x = self.x - other.x,
-            .y = self.y - other.y,
-            .z = self.z - other.z,
-            .w = self.w - other.w,
-        };
-    }
+pub fn magnitude(v: Vec4) f32 {
+    return @sqrt(magnitudeSquared(v));
+}
 
-    pub fn negate(self: Vec4) Vec4 {
-        return .{
-            .x = -self.x,
-            .y = -self.y,
-            .z = -self.z,
-            .w = -self.w,
-        };
-    }
+pub fn magnitudeSquared(v: Vec4) f32 {
+    return @reduce(.Add, v * v);
+}
 
-    pub fn mult(self: Vec4, scalar: f32) Vec4 {
-        return .{
-            .x = self.x * scalar,
-            .y = self.y * scalar,
-            .z = self.z * scalar,
-            .w = self.w * scalar,
-        };
-    }
+pub fn normalize(v: Vec4) Vec4 {
+    std.debug.assert(std.math.approxEqAbs(f32, magnitude(v), 0, constants.epsilon));
 
-    pub fn div(self: Vec4, scalar: f32) Vec4 {
-        return .{
-            .x = self.x / scalar,
-            .y = self.y / scalar,
-            .z = self.z / scalar,
-            .w = self.w / scalar,
-        };
-    }
+    const mag: Vec4 = @splat(v.magnitude());
+    return v / mag;
+}
 
-    pub fn magnitude(self: Vec4) f32 {
-        return math.sqrt(self.x * self.x +
-            self.y * self.y +
-            self.z * self.z +
-            self.w * self.w);
-    }
+/// We should only be using dot and cross product on vectors and not points.
+pub fn dot(lhs: Vec4, rhs: Vec4) f32 {
+    return @reduce(.Add, lhs * rhs);
+}
 
-    pub fn magnitudeSquared(self: Vec4) f32 {
-        return self.x * self.x +
-            self.y * self.y +
-            self.z * self.z +
-            self.w * self.w;
-    }
-
-    pub fn normalize(self: Vec4) Vec4 {
-        const mag = self.magnitude();
-        return .{
-            .x = self.x / mag,
-            .y = self.y / mag,
-            .z = self.z / mag,
-            .w = self.w / mag,
-        };
-    }
-
-    /// We should only be using dot and cross product on vectors and not points.
-    pub fn dot(self: Vec4, other: Vec4) f32 {
-        return self.x * other.x +
-            self.y * other.y +
-            self.z * other.z +
-            self.w * other.w;
-    }
-
-    /// 3D cross product, w is dropped
-    pub fn cross(self: Vec4, other: Vec4) Vec4 {
-        return .{
-            .x = self.y * other.z - self.z * other.y,
-            .y = self.z * other.x - self.x * other.z,
-            .z = self.x * other.y - self.y * other.x,
-            .w = 0,
-        };
-    }
-
-    pub inline fn at(self: Vec4, i: usize) f32 {
-        return switch (i) {
-            0 => self.x,
-            1 => self.y,
-            2 => self.z,
-            3 => self.w,
-            else => unreachable,
-        };
-    }
-};
+/// 3D cross product, w is dropped
+pub fn cross(lhs: Vec4, rhs: Vec4) Vec4 {
+    return .{
+        lhs[1] * rhs[2] - lhs[2] * rhs[1],
+        lhs[2] * rhs[0] - lhs[0] * rhs[2],
+        lhs[0] * rhs[1] - lhs[1] * rhs[0],
+        0,
+    };
+}

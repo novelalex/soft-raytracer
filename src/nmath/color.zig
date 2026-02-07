@@ -1,32 +1,23 @@
 const std = @import("std");
 const Writer = std.Io.Writer;
-const vector = @import("vector.zig");
+const vec = @import("vector.zig");
 
-pub const Color = extern union {
-    rgba: extern struct {
-        r: f32,
-        g: f32,
-        b: f32,
-        a: f32,
-    },
-    vec: vector.Vec4,
+pub const Color = vec.Vec4;
 
-    pub fn init(r: f32, g: f32, b: f32) Color {
-        return .{ .rgba = .{ .r = r, .g = g, .b = b, .a = 1 } };
-    }
+pub fn init(_r: f32, _g: f32, _b: f32) Color {
+    return .{ _r, _g, _b, 1 };
+}
 
-    pub fn format(self: Color, writer: *Writer) !void {
-        try writer.print("Color({d}, {d}, {d})", .{ self.rgba.r, self.rgba.g, self.rgba.b });
-    }
+pub fn r(c: Color) f32 {
+    c[0];
+}
+pub fn g(c: Color) f32 {
+    c[1];
+}
+pub fn b(c: Color) f32 {
+    c[2];
+}
 
-    pub fn hadamard_product(self: Color, other: Color) Color {
-        return .{
-            .rgba = .{
-                .r = self.rgba.r * other.rgba.r,
-                .g = self.rgba.g * other.rgba.g,
-                .b = self.rgba.b * other.rgba.b,
-                .a = self.rgba.a * other.rgba.a,
-            },
-        };
-    }
-};
+pub fn hadamardProduct(lhs: Color, rhs: Color) Color {
+    return lhs * rhs;
+}
