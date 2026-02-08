@@ -3,4 +3,5 @@ test {
     _ = @import("transform.zig");
     _ = @import("quadratics.zig");
     _ = @import("ray.zig");
+    _ = @import("intersect.zig");
 }

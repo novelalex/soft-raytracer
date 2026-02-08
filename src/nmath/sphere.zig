@@ -1,4 +1,5 @@
 const v = @import("vector.zig");
+const mathf = @import("mathf.zig");
 
 pub const Sphere = struct {
     center: v.Point,
@@ -15,4 +16,8 @@ pub const Sphere = struct {
         .center = v.point(0, 0, 0),
         .radius = 1,
     };
+
+    pub fn approxEq(self: Sphere, other: Sphere) bool {
+        return mathf.approxEq(self.radius, other.radius) and v.approxEq(self.center, other.center);
+    }
 };
