@@ -1,4 +1,5 @@
 Phong Lighting - Feb 8th, 2026, 2:03 AM:
+
 ![A Lit Circle](renders/phong.png)
 
 
