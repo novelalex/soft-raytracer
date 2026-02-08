@@ -1,2 +1,2 @@
 Current state of the renderer:
-[A Circle](renders/raycast.png)
+![A Circle](renders/raycast.png)
