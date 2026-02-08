@@ -22,7 +22,7 @@ pub fn main() !void {
     const pixel_size: f32 = wall_size / canvas_pixels;
     const half_wall_size: f32 = wall_size / 2;
     const color = clr.init(1, 1, 1);
-    const shape = sphere.Sphere.unit;
+    const shape = sphere.Sphere.init();
 
     for (0..canvas.height - 1) |y| {
         const world_y: f32 = half_wall_size - pixel_size * @as(f32, @floatFromInt(y));

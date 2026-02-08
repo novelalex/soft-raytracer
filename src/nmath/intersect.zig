@@ -1,6 +1,7 @@
 const Sphere = @import("sphere.zig").Sphere;
 const Ray = @import("ray.zig").Ray;
 const v = @import("vector.zig");
+const matrix = @import("matrix.zig");
 const std = @import("std");
 const constants = @import("constants.zig");
 const quadratics = @import("quadratics.zig");
@@ -140,7 +141,7 @@ pub const Intersections = struct {
     }
 
     test "Intersections:hit when all intersections have positive t" {
-        const s = Shape{ .sphere = Sphere.unit };
+        const s = Shape{ .sphere = Sphere.init() };
         const xs = Intersections.init(.{
             Intersection.init(2, s),
             Intersection.init(1, s),
@@ -150,7 +151,7 @@ pub const Intersections = struct {
     }
 
     test "Intersections:hit when some intersections have negative t" {
-        const s = Shape{ .sphere = Sphere.unit };
+        const s = Shape{ .sphere = Sphere.init() };
         const xs = Intersections.init(.{
             Intersection.init(1, s),
             Intersection.init(-1, s),
@@ -160,7 +161,7 @@ pub const Intersections = struct {
     }
 
     test "Intersections:hit when all intersections have negative t" {
-        const s = Shape{ .sphere = Sphere.unit };
+        const s = Shape{ .sphere = Sphere.init() };
         const xs = Intersections.init(.{
             Intersection.init(-41, s),
             Intersection.init(-1, s),
@@ -170,7 +171,7 @@ pub const Intersections = struct {
     }
 
     test "Intersections:hit is always the lowest non-negative intersection" {
-        const s = Shape{ .sphere = Sphere.unit };
+        const s = Shape{ .sphere = Sphere.init() };
         const xs = Intersections.init(.{
             Intersection.init(5, s),
             Intersection.init(7, s),
@@ -183,10 +184,13 @@ pub const Intersections = struct {
 };
 
 pub fn raySphere(ray: Ray, sphere: Sphere) Intersections {
-    const D = ray.direction;
-    const S = ray.origin;
-    const C = sphere.center;
-    const r = sphere.radius;
+    const D = matrix.mat4MultiplyVec(matrix.mat4Inverse(sphere.transform), ray.direction);
+    const S = matrix.mat4MultiplyVec(matrix.mat4Inverse(sphere.transform), ray.origin);
+    const C = v.point(0, 0, 0);
+    const r = 1.0;
+
+    // this does some extra calculations that are not necessary for unit spheres with ray transformations
+    // but it is a useful refrence if i need real ray sphere intersection
 
     const a = v.dot(D, D);
     const b = 2 * v.dot(S, D) - 2 * v.dot(D, C);
@@ -206,7 +210,7 @@ pub fn raySphere(ray: Ray, sphere: Sphere) Intersections {
 
 test "intersect:raySphere when ray passes through two points on a sphere" {
     const r = Ray.init(v.point(0, 0, -5), v.vector(0, 0, 1));
-    const s = Sphere.unit;
+    const s = Sphere.init();
     const expected = Intersections.two(
         Intersection.init(4, Shape{ .sphere = s }),
         Intersection.init(6, Shape{ .sphere = s }),
@@ -216,7 +220,7 @@ test "intersect:raySphere when ray passes through two points on a sphere" {
 
 test "intersect:raySphere when ray passes through one point on a sphere" {
     const r = Ray.init(v.point(0, 1, -5), v.vector(0, 0, 1));
-    const s = Sphere.unit;
+    const s = Sphere.init();
     const expected = Intersections.one(
         Intersection.init(5, Shape{ .sphere = s }),
     );
@@ -225,14 +229,14 @@ test "intersect:raySphere when ray passes through one point on a sphere" {
 
 test "intersect:raySphere when ray misses the sphere" {
     const r = Ray.init(v.point(0, 2, -5), v.vector(0, 0, 1));
-    const s = Sphere.unit;
+    const s = Sphere.init();
     const expected = Intersections.zero();
     try std.testing.expect(Intersections.approxEq(raySphere(r, s), expected));
 }
 
 test "intersect:raySphere when ray originates in the sphere" {
     const r = Ray.init(v.point(0, 0, 0), v.vector(0, 0, 1));
-    const s = Sphere.unit;
+    const s = Sphere.init();
     const expected = Intersections.two(
         Intersection.init(-1, Shape{ .sphere = s }),
         Intersection.init(1, Shape{ .sphere = s }),
@@ -242,7 +246,7 @@ test "intersect:raySphere when ray originates in the sphere" {
 
 test "intersect:raySphere when sphere is behind the ray" {
     const r = Ray.init(v.point(0, 0, 5), v.vector(0, 0, 1));
-    const s = Sphere.unit;
+    const s = Sphere.init();
     const expected = Intersections.two(
         Intersection.init(-6, Shape{ .sphere = s }),
         Intersection.init(-4, Shape{ .sphere = s }),
