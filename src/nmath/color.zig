@@ -18,6 +18,10 @@ pub fn b(c: Color) f32 {
     c[2];
 }
 
+pub fn fromVec(v: vec.Vec4) Color {
+    return .{ v[0], v[1], v[2], 1 };
+}
+
 pub fn hadamardProduct(lhs: Color, rhs: Color) Color {
     return lhs * rhs;
 }

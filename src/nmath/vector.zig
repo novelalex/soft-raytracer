@@ -1,7 +1,7 @@
 const std = @import("std");
+const expect = std.testing.expect;
 const builtin = @import("builtin");
 const math = std.math;
-const testing = std.testing;
 
 const constants = @import("constants.zig");
 /// A 4D Vector used for points and directions and colors.
@@ -46,7 +46,7 @@ pub fn vec3(v: Vec4) @Vector(3, f32) {
 
 pub const FmtVec4 = std.fmt.Alt(Vec4, format);
 fn format(v: Vec4, wr: *std.Io.Writer) !void {
-    try wr.print("{d} {d} {d}", .{ v[0], v[1], v[2] });
+    try wr.print("{d} {d} {d} {d}", .{ v[0], v[1], v[2], v[3] });
 }
 pub fn fmt(v: Vec4) FmtVec4 {
     return .{
@@ -55,11 +55,11 @@ pub fn fmt(v: Vec4) FmtVec4 {
 }
 
 pub fn approxEq(lhs: Vec4, rhs: Vec4) bool {
-    return @reduce(.And, @abs(lhs - rhs) < @as(Vec4, @splat(constants.epsilon)));
+    return @reduce(.And, @abs(lhs - rhs) < splat(constants.epsilon));
 }
 
 pub fn approxZero(v: Vec4) bool {
-    return @reduce(.And, @abs(v) < @as(Vec4, @splat(constants.epsilon)));
+    return @reduce(.And, @abs(v) < splat(constants.epsilon));
 }
 
 pub fn magnitude(v: Vec4) f32 {
@@ -90,4 +90,29 @@ pub fn cross(lhs: Vec4, rhs: Vec4) Vec4 {
         lhs[0] * rhs[1] - lhs[1] * rhs[0],
         0,
     };
+}
+
+pub inline fn splat(s: f32) Vec4 {
+    return @as(Vec4, @splat(s));
+}
+
+pub fn reflect(in: Vector, normal: Vector) Vector {
+    return in - normal * splat(2) * splat(dot(in, normal));
+}
+
+test "vector:reflect works at 45 degrees" {
+    const v = vector(1, -1, 0);
+    const n = vector(0, 1, 0);
+    const r = reflect(v, n);
+    const expected = vector(1, 1, 0);
+    try expect(approxEq(r, expected));
+}
+
+test "vector:reflect works at slanted angles" {
+    const v = vector(0, -1, 0);
+    const root_2_over_2 = @sqrt(2.0) / 2.0;
+    const n = vector(root_2_over_2, root_2_over_2, 0);
+    const r = reflect(v, n);
+    const expected = vector(1, 0, 0);
+    try expect(approxEq(r, expected));
 }

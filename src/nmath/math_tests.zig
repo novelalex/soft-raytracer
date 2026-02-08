@@ -1,4 +1,5 @@
 test {
+    _ = @import("vector.zig");
     _ = @import("matrix.zig");
     _ = @import("transform.zig");
     _ = @import("quadratics.zig");
