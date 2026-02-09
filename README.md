@@ -1,4 +1,4 @@
-Phong Lighting rewritten in Go - Feb 8th 2026, 11:09 PM
+Phong Lighting rewritten in Go - Feb 8th 2026, 11:09 PM:
 
 ![A Go Circle](renders/phong_go.png)
 
