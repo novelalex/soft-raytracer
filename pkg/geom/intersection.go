@@ -4,14 +4,14 @@ import (
 	"sort"
 
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/renderer"
+	"github.com/novelalex/soft-raytracer/pkg/rendering"
 )
 
 type Shape interface {
 	Transform() nmath.Mat4
 	SetTransform(nmath.Mat4)
-	Material() renderer.Material
-	SetMaterial(renderer.Material)
+	Material() rendering.Material
+	SetMaterial(rendering.Material)
 	NormalAt(world_point nmath.Vec3) nmath.Vec3
 }
 

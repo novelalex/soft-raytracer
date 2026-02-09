@@ -2,15 +2,15 @@ package geom
 
 import (
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/renderer"
+	"github.com/novelalex/soft-raytracer/pkg/rendering"
 )
 
 type Sphere struct {
 	transform nmath.Mat4
-	material  renderer.Material
+	material  rendering.Material
 }
 
-func NewSphere(t nmath.Mat4, m renderer.Material) Sphere {
+func NewSphere(t nmath.Mat4, m rendering.Material) Sphere {
 	return Sphere{
 		t,
 		m,
@@ -21,7 +21,7 @@ func (s Sphere) Transform() nmath.Mat4 {
 	return s.transform
 }
 
-func (s Sphere) Material() renderer.Material {
+func (s Sphere) Material() rendering.Material {
 	return s.material
 }
 
@@ -29,7 +29,7 @@ func (s *Sphere) SetTransform(m nmath.Mat4) {
 	s.transform = m
 }
 
-func (s *Sphere) SetMaterial(m renderer.Material) {
+func (s *Sphere) SetMaterial(m rendering.Material) {
 	s.material = m
 }
 

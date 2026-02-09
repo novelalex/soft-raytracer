@@ -7,7 +7,7 @@ import (
 	"github.com/novelalex/soft-raytracer/pkg/geom"
 	"github.com/novelalex/soft-raytracer/pkg/gfx"
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/renderer"
+	"github.com/novelalex/soft-raytracer/pkg/rendering"
 )
 
 func main() {
@@ -19,9 +19,9 @@ func main() {
 	pixel_size := wall_size / canvas_pixels
 	half_wall_size := wall_size / 2.0
 
-	shape := geom.NewSphere(nmath.Mat4Identity(), renderer.DefaultMaterial())
+	shape := geom.NewSphere(nmath.Mat4Identity(), rendering.DefaultMaterial())
 	shape.Scale(1, 0.5, 1).Translate(1, 0, 0)
-	light := renderer.NewPointLight(nmath.NewVec3(-10, 10, -10), nmath.NewColor(1, 1, 1))
+	light := rendering.NewPointLight(nmath.NewVec3(-10, 10, -10), nmath.NewColor(1, 1, 1))
 
 	for y := range canvas.Height() {
 		world_y := half_wall_size - pixel_size*float64(y)
