@@ -69,3 +69,7 @@ func (s Sphere) NormalAt(world_point nmath.Vec3) nmath.Vec3 {
 	world_normal := s.transform.Inverse().Transpose().MultV(object_normal)
 	return world_normal.Normalize().DropW()
 }
+
+func (s Sphere) IntersectRay(r Ray) Intersections {
+	return r.IntersectSphere(s)
+}

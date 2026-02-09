@@ -37,6 +37,15 @@ func (c Color) AsVec4() Vec4 {
 	return Vec4{X: c.R, Y: c.G, Z: c.B, W: c.A}
 }
 
+func (c Color) Add(other Color) Color {
+	return Color{
+		c.R + other.R,
+		c.G + other.G,
+		c.B + other.B,
+		c.A + other.A,
+	}
+}
+
 func (c Color) HadamardMult(other Color) Color {
 	return Color{
 		c.R * other.R,

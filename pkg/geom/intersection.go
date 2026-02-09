@@ -12,12 +12,22 @@ type Shape interface {
 	SetTransform(nmath.Mat4)
 	Material() rendering.Material
 	SetMaterial(rendering.Material)
+	IntersectRay(Ray) Intersections
 	NormalAt(world_point nmath.Vec3) nmath.Vec3
 }
 
 type Intersection struct {
 	T      float64
 	Object Shape
+}
+
+type IntersectionPrecomputation struct {
+	T       float64
+	Object  Shape
+	Point   nmath.Vec3
+	EyeV    nmath.Vec3
+	NormalV nmath.Vec3
+	Inside  bool
 }
 
 func NewIntersection(t float64, object Shape) Intersection {
@@ -33,11 +43,23 @@ func NewIntersections(xs []Intersection) Intersections {
 	return xs
 }
 
-func (xs *Intersections) Append(x Intersection) {
-	*xs = append(*xs, x)
-	sort.Slice(*xs, func(i, j int) bool {
-		return (*xs)[i].T < (*xs)[j].T
+func (xs Intersections) Append(x Intersection) Intersections {
+	xs = append(xs, x)
+	sort.Slice(xs, func(i, j int) bool {
+		return (xs)[i].T < (xs)[j].T
 	})
+	return xs
+}
+
+func (xs Intersections) Merge(ys Intersections) Intersections {
+	for i := range ys {
+		xs = append(xs, ys[i])
+	}
+	sort.Slice(xs, func(i, j int) bool {
+		return (xs)[i].T < (xs)[j].T
+	})
+
+	return xs
 }
 
 func (xs Intersections) Hit() (x Intersection, ok bool) {
@@ -48,4 +70,26 @@ func (xs Intersections) Hit() (x Intersection, ok bool) {
 	}
 
 	return NewIntersection(0, &Sphere{}), false
+}
+
+func (x Intersection) Precompute(r Ray) IntersectionPrecomputation {
+	point := r.At(x.T)
+	normal := x.Object.NormalAt(point)
+	eye := r.Dir.Neg()
+	var inside bool
+	if normal.Dot(eye) < 0 {
+		inside = true
+		normal = normal.Neg()
+	} else {
+		inside = false
+	}
+
+	return IntersectionPrecomputation{
+		T:       x.T,
+		Object:  x.Object,
+		Point:   point,
+		EyeV:    eye,
+		NormalV: normal,
+		Inside:  inside,
+	}
 }

@@ -190,3 +190,17 @@ func (v Vec3) Normalize() Vec3 {
 func (v Vec3) AsColor() Color {
 	return Color{v.X, v.Y, v.Z, 1}
 }
+
+func (from Vec3) LookAt(to, up Vec3) Mat4 {
+	forward := to.Sub(from).Normalize()
+	left := forward.Cross(up.Normalize())
+	true_up := left.Cross(forward)
+	orientation := Mat4{
+		left.X, left.Y, left.Z, 0,
+		true_up.X, true_up.Y, true_up.Z, 0,
+		-forward.X, -forward.Y, -forward.Z, 0,
+		0, 0, 0, 1,
+	}
+
+	return orientation.Translate(-from.X, -from.Y, -from.Z)
+}
