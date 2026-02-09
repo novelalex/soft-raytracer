@@ -20,6 +20,7 @@ func main() {
 	half_wall_size := wall_size / 2.0
 
 	shape := geom.NewSphere(nmath.Mat4Identity(), renderer.DefaultMaterial())
+	shape.Scale(1, 0.5, 1).Translate(1, 0, 0)
 	light := renderer.NewPointLight(nmath.NewVec3(-10, 10, -10), nmath.NewColor(1, 1, 1))
 
 	for y := range canvas.Height() {

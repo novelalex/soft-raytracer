@@ -75,15 +75,15 @@ func (ray Ray) IntersectSphere(s Sphere) Intersections {
 
 	if len(sol) == 1 {
 		return NewIntersections([]Intersection{
-			NewIntersection(sol[0], s),
+			NewIntersection(sol[0], &s),
 		})
 	}
 
 	t1 := math.Min(sol[0], sol[1])
 	t2 := math.Min(sol[0], sol[1])
 	return NewIntersections([]Intersection{
-		NewIntersection(t1, s),
-		NewIntersection(t2, s),
+		NewIntersection(t1, &s),
+		NewIntersection(t2, &s),
 	})
 
 }

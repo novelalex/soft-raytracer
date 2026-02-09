@@ -9,7 +9,9 @@ import (
 
 type Shape interface {
 	Transform() nmath.Mat4
+	SetTransform(nmath.Mat4)
 	Material() renderer.Material
+	SetMaterial(renderer.Material)
 	NormalAt(world_point nmath.Vec3) nmath.Vec3
 }
 
@@ -45,5 +47,5 @@ func (xs Intersections) Hit() (x Intersection, ok bool) {
 		}
 	}
 
-	return NewIntersection(0, Sphere{}), false
+	return NewIntersection(0, &Sphere{}), false
 }
