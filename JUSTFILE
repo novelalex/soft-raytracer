@@ -6,11 +6,11 @@ default:
 
 # Run application
 run:
-    go run ./cmd/raytracer
+    go run ./cmd/soft-raytracer > img.ppm
 
 # Build application
 build:
-    go build -o bin/raytracer.exe ./cmd/raytracer
+    go build -o bin/soft-raytracer.exe ./cmd/soft-raytracer
 
 # Run tests
 test:

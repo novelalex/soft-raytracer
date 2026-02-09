@@ -17,6 +17,10 @@ func NewVector4(x, y, z float64) Vec4 {
 	return Vec4{x, y, z, 0}
 }
 
+func (v Vec4) DropW() Vec3 {
+	return Vec3{v.X, v.Y, v.Z}
+}
+
 func (lhs Vec4) ApproxEq(rhs Vec4) bool {
 	return ApproxEq(lhs.X, rhs.X) &&
 		ApproxEq(lhs.Y, rhs.Y) &&
@@ -123,6 +127,10 @@ func (v Vec3) WithW(w float64) Vec4 {
 	return Vec4{v.X, v.Y, v.Z, w}
 }
 
+func (v Vec3) Neg() Vec3 {
+	return Vec3{-v.X, -v.Y, -v.Z}
+}
+
 func (lhs Vec3) Add(rhs Vec3) Vec3 {
 	return Vec3{lhs.X + rhs.X, lhs.Y + rhs.Y, lhs.Z + rhs.Z}
 }
@@ -177,4 +185,8 @@ func (v Vec3) Normalize() Vec3 {
 		return v
 	}
 	return Vec3{v.X / m, v.Y / m, v.Z / m}
+}
+
+func (v Vec3) AsColor() Color {
+	return Color{v.X, v.Y, v.Z, 1}
 }

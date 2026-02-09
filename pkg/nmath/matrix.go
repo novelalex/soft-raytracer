@@ -44,11 +44,11 @@ func (m Mat4) LooseEq(n Mat4) bool {
 	return true
 }
 
-func (m *Mat4) At(x, y uint) float64 {
+func (m Mat4) At(x, y uint) float64 {
 	return m[y*4+x]
 }
 
-func (a *Mat4) Mult(b Mat4) Mat4 {
+func (a Mat4) Mult(b Mat4) Mat4 {
 	return Mat4{
 		// row 0
 		a[0]*b[0] + a[1]*b[4] + a[2]*b[8] + a[3]*b[12],
@@ -76,7 +76,7 @@ func (a *Mat4) Mult(b Mat4) Mat4 {
 	}
 }
 
-func (m *Mat4) MultV(v Vec4) Vec4 {
+func (m Mat4) MultV(v Vec4) Vec4 {
 	return Vec4{
 		m[0]*v.X + m[1]*v.Y + m[2]*v.Z + m[3]*v.W,
 		m[4]*v.X + m[5]*v.Y + m[6]*v.Z + m[7]*v.W,
@@ -85,7 +85,7 @@ func (m *Mat4) MultV(v Vec4) Vec4 {
 	}
 }
 
-func (m *Mat4) Transpose() Mat4 {
+func (m Mat4) Transpose() Mat4 {
 	return Mat4{
 		m[0], m[4], m[8], m[12],
 		m[1], m[5], m[9], m[13],
@@ -94,7 +94,7 @@ func (m *Mat4) Transpose() Mat4 {
 	}
 }
 
-func (m *Mat4) Inverse() Mat4 {
+func (m Mat4) Inverse() Mat4 {
 	adj := Mat4{
 		// Row 0
 		m[5]*m[10]*m[15] - m[5]*m[11]*m[14] - m[9]*m[6]*m[15] + m[9]*m[7]*m[14] + m[13]*m[6]*m[11] - m[13]*m[7]*m[10],
@@ -132,4 +132,75 @@ func (m *Mat4) Inverse() Mat4 {
 	}
 
 	return adj
+}
+
+func NewTranslation(x, y, z float64) Mat4 {
+	return Mat4{
+		1, 0, 0, x,
+		0, 1, 0, y,
+		0, 0, 1, z,
+		0, 0, 0, 1,
+	}
+}
+
+func NewScaling(x, y, z float64) Mat4 {
+	return Mat4{
+		x, 0, 0, 0,
+		0, y, 0, 0,
+		0, 0, z, 0,
+		0, 0, 0, 1,
+	}
+}
+
+func NewRotation(angle float64, axis Vec3) Mat4 {
+	return AngleAxisRotation(angle, axis).AsMat4()
+}
+
+func NewRotationX(angle float64) Mat4 {
+	return NewRotation(angle, Vec3{1, 0, 0})
+}
+
+func NewRotationY(angle float64) Mat4 {
+	return NewRotation(angle, Vec3{0, 1, 0})
+}
+
+func NewRotationZ(angle float64) Mat4 {
+	return NewRotation(angle, Vec3{0, 0, 1})
+}
+
+func NewShearing(xy, xz, yx, yz, zx, zy float64) Mat4 {
+	return Mat4{
+		1, xy, xz, 0,
+		yx, 1, yz, 0,
+		zx, zy, 1, 0,
+		0, 0, 0, 1,
+	}
+}
+
+func (m Mat4) Translate(x, y, z float64) Mat4 {
+	return m.Mult(NewTranslation(x, y, z))
+}
+
+func (m Mat4) Scale(x, y, z float64) Mat4 {
+	return m.Mult(NewScaling(x, y, z))
+}
+
+func (m Mat4) Rotate(angle float64, axis Vec3) Mat4 {
+	return m.Mult(NewRotation(angle, axis))
+}
+
+func (m Mat4) RotateX(angle float64) Mat4 {
+	return m.Mult(NewRotationX(angle))
+}
+
+func (m Mat4) RotateY(angle float64) Mat4 {
+	return m.Mult(NewRotationY(angle))
+}
+
+func (m Mat4) RotateZ(angle float64) Mat4 {
+	return m.Mult(NewRotationZ(angle))
+}
+
+func (m Mat4) Shear(xy, xz, yx, yz, zx, zy float64) Mat4 {
+	return m.Mult(NewShearing(xy, xz, yx, yz, zx, zy))
 }
