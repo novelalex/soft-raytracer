@@ -31,14 +31,18 @@ func DefaultMaterial() Material {
 	}
 }
 
-func (m Material) Lighting(l PointLight, p, eye, normal Vec3) Color {
+func (m Material) Lighting(l PointLight, p, eye, normal Vec3, in_shadow bool) Color {
 	ambient := NewColor(0, 0, 0)
 	diffuse := NewColor(0, 0, 0)
 	specular := NewColor(0, 0, 0)
 
-	effective_color := m.Color.HadamardMult(l.intensity)
-	light_v := l.position.Sub(p).Normalize()
+	effective_color := m.Color.HadamardMult(l.Intensity)
+	light_v := l.Position.Sub(p).Normalize()
 	ambient = effective_color.AsVec3().Mult(m.Ambient).AsColor()
+
+	if in_shadow {
+		return ambient
+	}
 
 	light_dot_normal := light_v.Dot(normal)
 	if light_dot_normal < 0 {
@@ -52,7 +56,7 @@ func (m Material) Lighting(l PointLight, p, eye, normal Vec3) Color {
 			specular = NewColor(0, 0, 0)
 		} else {
 			factor := math.Pow(reflect_dot_eye, m.Shininess)
-			specular = l.intensity.AsVec3().Mult(m.Specular * factor).AsColor()
+			specular = l.Intensity.AsVec3().Mult(m.Specular * factor).AsColor()
 		}
 	}
 

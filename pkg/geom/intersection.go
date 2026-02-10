@@ -22,12 +22,13 @@ type Intersection struct {
 }
 
 type IntersectionPrecomputation struct {
-	T       float64
-	Object  Shape
-	Point   nmath.Vec3
-	EyeV    nmath.Vec3
-	NormalV nmath.Vec3
-	Inside  bool
+	T         float64
+	Object    Shape
+	Point     nmath.Vec3
+	EyeV      nmath.Vec3
+	NormalV   nmath.Vec3
+	OverPoint nmath.Vec3
+	Inside    bool
 }
 
 func NewIntersection(t float64, object Shape) Intersection {
@@ -83,13 +84,14 @@ func (x Intersection) Precompute(r Ray) IntersectionPrecomputation {
 	} else {
 		inside = false
 	}
-
+	over_point := point.Add(normal.Mult(nmath.F64Epsilon))
 	return IntersectionPrecomputation{
-		T:       x.T,
-		Object:  x.Object,
-		Point:   point,
-		EyeV:    eye,
-		NormalV: normal,
-		Inside:  inside,
+		T:         x.T,
+		Object:    x.Object,
+		Point:     point,
+		EyeV:      eye,
+		NormalV:   normal,
+		OverPoint: over_point,
+		Inside:    inside,
 	}
 }

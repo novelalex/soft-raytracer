@@ -62,7 +62,7 @@ func main() {
 		},
 	}
 
-	c := camera.NewCamera(200, 200, math.Pi/3.0)
+	c := camera.NewCamera(300, 300, math.Pi/3.0)
 	c.Transform = nmath.NewVec3(0, 1.5, -5).
 		LookAt(
 			nmath.NewVec3(0, 1, 0),

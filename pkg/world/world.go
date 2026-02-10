@@ -42,7 +42,8 @@ func (w *World) IntersectRay(r geom.Ray) geom.Intersections {
 func (w *World) ShadeHit(comps geom.IntersectionPrecomputation) nmath.Color {
 	out_color := nmath.NewColor(0, 0, 0)
 	for _, light := range w.Lights {
-		l_color := comps.Object.Material().Lighting(light, comps.Point, comps.EyeV, comps.NormalV)
+		in_shadow := w.IsShadowed(comps.OverPoint, light)
+		l_color := comps.Object.Material().Lighting(light, comps.Point, comps.EyeV, comps.NormalV, in_shadow)
 		out_color = out_color.Add(l_color)
 	}
 
@@ -60,4 +61,20 @@ func (w *World) ColorAt(r geom.Ray) nmath.Color {
 	color := w.ShadeHit(precomp)
 
 	return color
+}
+
+func (w *World) IsShadowed(p nmath.Vec3, l rendering.PointLight) bool {
+	v := l.Position.Sub(p)
+	dist := v.Mag()
+	dir := v.Normalize()
+
+	r := geom.NewRay(p, dir)
+	xs := w.IntersectRay(r)
+
+	h, ok := xs.Hit()
+	if ok && h.T < dist {
+		return true
+	}
+
+	return false
 }

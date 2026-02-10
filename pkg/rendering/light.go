@@ -3,8 +3,8 @@ package rendering
 import "github.com/novelalex/soft-raytracer/pkg/nmath"
 
 type PointLight struct {
-	position  nmath.Vec3
-	intensity nmath.Color
+	Position  nmath.Vec3
+	Intensity nmath.Color
 }
 
 func NewPointLight(position nmath.Vec3, intensity nmath.Color) PointLight {

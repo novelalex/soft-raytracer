@@ -1,3 +1,7 @@
+Shadows are pretty simple - Feb 10th 2026, 2:36 AM:
+
+![3 Spheres casting shadows](renders/world_shadows.png)
+
 Rendering a collection of objects - Feb 10th 2026, 2:11 AM:
 
 ![3 Spheres](renders/world.png)
