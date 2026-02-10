@@ -14,24 +14,26 @@ import (
 
 func main() {
 
-	floor := geom.DefaultSphere()
-	floor.Scale(10, 0.01, 10)
-	floor.Mat.Color = nmath.NewColor(1, 0.9, 0.9)
-	floor.Mat.Specular = 0
+	//	floor := geom.DefaultSphere()
+	//	floor.Scale(10, 0.01, 10)
+	//	floor.Mat.Color = nmath.NewColor(1, 0.9, 0.9)
+	//	floor.Mat.Specular = 0
+	//
+	//	left_wall := geom.DefaultSphere()
+	//	left_wall.Translate(0, 0, 5).
+	//		RotateY(-math.Pi/4.0).
+	//		RotateX(math.Pi/2.0).
+	//		Scale(10, 0.01, 10)
+	//	left_wall.Mat = floor.Mat
+	//
+	//	right_wall := geom.DefaultSphere()
+	//	right_wall.Translate(0, 0, 5).
+	//		RotateY(math.Pi/4.0).
+	//		RotateX(math.Pi/2.0).
+	//		Scale(10, 0.01, 10)
+	//	right_wall.Mat = floor.Mat
 
-	left_wall := geom.DefaultSphere()
-	left_wall.Translate(0, 0, 5).
-		RotateY(-math.Pi/4.0).
-		RotateX(math.Pi/2.0).
-		Scale(10, 0.01, 10)
-	left_wall.Mat = floor.Mat
-
-	right_wall := geom.DefaultSphere()
-	right_wall.Translate(0, 0, 5).
-		RotateY(math.Pi/4.0).
-		RotateX(math.Pi/2.0).
-		Scale(10, 0.01, 10)
-	right_wall.Mat = floor.Mat
+	floor := geom.DefaultPlane()
 
 	middle := geom.DefaultSphere()
 	middle.Translate(-0.5, 1, 0.5)
@@ -53,12 +55,12 @@ func main() {
 	left.Mat.Diffuse = 0.7
 	left.Mat.Specular = 0.3
 
-	light := rendering.NewPointLight(nmath.NewVec3(-10, 10, -10), nmath.NewColor(1, 1, 1))
+	light := rendering.NewPointLight(nmath.NewVec3(-5, 10, -10), nmath.NewColor(1, 1, 1))
 
 	w := world.World{
 		Lights: []rendering.PointLight{light},
 		Objects: []geom.Shape{
-			&floor, &left_wall, &right_wall, &right, &middle, &right, &left,
+			&floor, &right, &middle, &right, &left,
 		},
 	}
 
