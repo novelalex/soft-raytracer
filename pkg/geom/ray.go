@@ -55,8 +55,8 @@ func (r Ray) RotateZ(angle float64) Ray {
 }
 
 func (ray Ray) IntersectSphere(s Sphere) Intersections {
-	D := s.transform.Inverse().MultV(ray.Dir.AsVector4())
-	S := s.transform.Inverse().MultV(ray.Origin.AsPoint4())
+	D := s.Xf.Inverse().MultV(ray.Dir.AsVector4())
+	S := s.Xf.Inverse().MultV(ray.Origin.AsPoint4())
 	C := nmath.NewPoint4(0, 0, 0)
 	r := 1.0
 
