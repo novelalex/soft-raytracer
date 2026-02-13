@@ -3,12 +3,14 @@ package rendering
 import (
 	"math"
 
+	"github.com/novelalex/soft-raytracer/pkg/geom"
 	. "github.com/novelalex/soft-raytracer/pkg/nmath"
 )
 
 type Material struct {
 	Color                                 Color
 	Ambient, Diffuse, Specular, Shininess float64
+	Pattern                               geom.Pattern
 }
 
 func NewMaterial(color Color, ambient, diffuse, specular, shininess float64) Material {
@@ -18,6 +20,7 @@ func NewMaterial(color Color, ambient, diffuse, specular, shininess float64) Mat
 		diffuse,
 		specular,
 		shininess,
+		nil,
 	}
 }
 
@@ -28,6 +31,7 @@ func DefaultMaterial() Material {
 		0.9,
 		0.9,
 		200.0,
+		nil,
 	}
 }
 
@@ -36,7 +40,15 @@ func (m Material) Lighting(l PointLight, p, eye, normal Vec3, in_shadow bool) Co
 	diffuse := NewColor(0, 0, 0)
 	specular := NewColor(0, 0, 0)
 
-	effective_color := m.Color.HadamardMult(l.Intensity)
+	var color Color
+	if m.Pattern != nil {
+		color = m.Pattern.At(p)
+	} else {
+		color = m.Color
+	}
+
+	effective_color := color.HadamardMult(l.Intensity)
+	
 	light_v := l.Position.Sub(p).Normalize()
 	ambient = effective_color.AsVec3().Mult(m.Ambient).AsColor()
 

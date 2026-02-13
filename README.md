@@ -1,7 +1,11 @@
+Patterns! (some refactoring was done) - Feb 13th 2026, 12:10 AM:
+
+![3 Spheres on a striped floor](renders/pattern.png)
+
+
 Fixed lighting normals - Feb 10th 2026, 11:25 AM:
 
 ![3 Spheres again but with good lighting](renders/shaded_world_fixed.png)
-
 
 
 Shadows are pretty simple - Feb 10th 2026, 2:36 AM:

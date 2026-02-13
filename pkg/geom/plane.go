@@ -4,26 +4,22 @@ import (
 	"math"
 
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/rendering"
 )
 
 type Plane struct {
-	Xf  nmath.Mat4
-	Mat rendering.Material
-	id  uint64
+	Xf nmath.Mat4
+	id uint64
 }
 
 func DefaultPlane() Plane {
 	return Plane{
 		nmath.Mat4Identity(),
-		rendering.DefaultMaterial(),
 		newId(),
 	}
 }
-func NewPlane(t nmath.Mat4, m rendering.Material) Plane {
+func NewPlane(t nmath.Mat4) Plane {
 	return Plane{
 		t,
-		m,
 		newId(),
 	}
 }
@@ -36,16 +32,8 @@ func (p Plane) Transform() nmath.Mat4 {
 	return p.Xf
 }
 
-func (p Plane) Material() rendering.Material {
-	return p.Mat
-}
-
 func (p *Plane) SetTransform(m nmath.Mat4) {
 	p.Xf = m
-}
-
-func (p *Plane) SetMaterial(m rendering.Material) {
-	p.Mat = m
 }
 
 func (p *Plane) Translate(x, y, z float64) *Plane {

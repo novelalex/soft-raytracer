@@ -17,6 +17,9 @@ func main() {
 	floor_shape := geom.DefaultPlane()
 	floor := world.NewObject(&floor_shape, rendering.DefaultMaterial())
 
+	pattern := geom.NewStripePattern(nmath.NewColor(1.0, 0, 0), nmath.NewColor(0.5, 0.1, 0.1))
+	floor.Material.Pattern = &pattern
+
 	// left_wall_shape := geom.DefaultSphere()
 	// left_wall_shape.Translate(0, 0, 5).
 	// 	RotateY(-math.Pi/4.0).
