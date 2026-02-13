@@ -75,9 +75,9 @@ func (s *Sphere) RotateZ(angle float64) *Sphere {
 
 func (s Sphere) NormalAt(world_point nmath.Vec3) nmath.Vec3 {
 	object_point := s.Xf.Inverse().MultV(world_point.AsPoint4())
-	object_normal := object_point.Sub(nmath.NewPoint4(0, 0, 0))
-	world_normal := s.Xf.Inverse().Transpose().MultV(object_normal)
-	return world_normal.Normalize().DropW()
+	object_normal := object_point.Sub(nmath.NewPoint4(0, 0, 0)).DropW()
+	world_normal := s.Xf.Inverse().Transpose().MultV(object_normal.AsVector4())
+	return world_normal.DropW().Normalize()
 }
 
 func (s Sphere) IntersectRay(r Ray) Intersections {

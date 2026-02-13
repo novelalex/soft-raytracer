@@ -57,7 +57,7 @@ func main() {
 	left.Material.Diffuse = 0.7
 	left.Material.Specular = 0.3
 
-	light := rendering.NewPointLight(nmath.NewVec3(-10, 10, -10), nmath.NewColor(1, 1, 1))
+	light := rendering.NewPointLight(nmath.NewVec3(-5, 10, -10), nmath.NewColor(1, 1, 1))
 
 	w := world.NewWorldWith(
 		[]rendering.PointLight{light},
