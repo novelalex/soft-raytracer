@@ -1,42 +1,46 @@
 package geom
 
 import (
+	"sync/atomic"
+
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/rendering"
 )
 
+var nextID uint64
+
 type Sphere struct {
-	Xf  nmath.Mat4
-	Mat rendering.Material
+	Xf nmath.Mat4
+	id uint64
+}
+
+func newId() uint64 {
+	return atomic.AddUint64(&nextID, 1)
 }
 
 func DefaultSphere() Sphere {
+
 	return Sphere{
 		nmath.Mat4Identity(),
-		rendering.DefaultMaterial(),
+		newId(),
 	}
 }
-func NewSphere(t nmath.Mat4, m rendering.Material) Sphere {
+func NewSphere(t nmath.Mat4) Sphere {
 	return Sphere{
 		t,
-		m,
+		newId(),
 	}
+}
+
+func (s Sphere) ID() uint64 {
+	return s.id
 }
 
 func (s Sphere) Transform() nmath.Mat4 {
 	return s.Xf
 }
 
-func (s Sphere) Material() rendering.Material {
-	return s.Mat
-}
-
 func (s *Sphere) SetTransform(m nmath.Mat4) {
 	s.Xf = m
-}
-
-func (s *Sphere) SetMaterial(m rendering.Material) {
-	s.Mat = m
 }
 
 func (s *Sphere) Translate(x, y, z float64) *Sphere {

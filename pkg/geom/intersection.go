@@ -4,16 +4,14 @@ import (
 	"sort"
 
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/rendering"
 )
 
 type Shape interface {
 	Transform() nmath.Mat4
 	SetTransform(nmath.Mat4)
-	Material() rendering.Material
-	SetMaterial(rendering.Material)
 	IntersectRay(Ray) Intersections
 	NormalAt(world_point nmath.Vec3) nmath.Vec3
+	ID() uint64
 }
 
 type Intersection struct {
