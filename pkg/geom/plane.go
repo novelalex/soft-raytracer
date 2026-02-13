@@ -10,19 +10,26 @@ import (
 type Plane struct {
 	Xf  nmath.Mat4
 	Mat rendering.Material
+	id  uint64
 }
 
 func DefaultPlane() Plane {
 	return Plane{
 		nmath.Mat4Identity(),
 		rendering.DefaultMaterial(),
+		newId(),
 	}
 }
 func NewPlane(t nmath.Mat4, m rendering.Material) Plane {
 	return Plane{
 		t,
 		m,
+		newId(),
 	}
+}
+
+func (p Plane) ID() uint64 {
+	return p.id
 }
 
 func (p Plane) Transform() nmath.Mat4 {

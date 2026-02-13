@@ -1,20 +1,12 @@
 package geom
 
 import (
-	"sync/atomic"
-
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
 )
-
-var nextID uint64
 
 type Sphere struct {
 	Xf nmath.Mat4
 	id uint64
-}
-
-func newId() uint64 {
-	return atomic.AddUint64(&nextID, 1)
 }
 
 func DefaultSphere() Sphere {

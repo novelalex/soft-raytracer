@@ -14,25 +14,22 @@ import (
 
 func main() {
 
-	floor_shape := geom.DefaultSphere()
-	floor_shape.Scale(10, 0.01, 10)
+	floor_shape := geom.DefaultPlane()
 	floor := world.NewObject(&floor_shape, rendering.DefaultMaterial())
-	floor.Material.Color = nmath.NewColor(1, 0.9, 0.9)
-	floor.Material.Specular = 0
 
-	left_wall_shape := geom.DefaultSphere()
-	left_wall_shape.Translate(0, 0, 5).
-		RotateY(-math.Pi/4.0).
-		RotateX(math.Pi/2.0).
-		Scale(10, 0.01, 10)
-	left_wall := world.NewObject(&left_wall_shape, floor.Material)
+	// left_wall_shape := geom.DefaultSphere()
+	// left_wall_shape.Translate(0, 0, 5).
+	// 	RotateY(-math.Pi/4.0).
+	// 	RotateX(math.Pi/2.0).
+	// 	Scale(10, 0.01, 10)
+	// left_wall := world.NewObject(&left_wall_shape, floor.Material)
 
-	right_wall_shape := geom.DefaultSphere()
-	right_wall_shape.Translate(0, 0, 5).
-		RotateY(math.Pi/4.0).
-		RotateX(math.Pi/2.0).
-		Scale(10, 0.01, 10)
-	right_wall := world.NewObject(&right_wall_shape, floor.Material)
+	// right_wall_shape := geom.DefaultSphere()
+	// right_wall_shape.Translate(0, 0, 5).
+	// 	RotateY(math.Pi/4.0).
+	// 	RotateX(math.Pi/2.0).
+	// 	Scale(10, 0.01, 10)
+	// right_wall := world.NewObject(&right_wall_shape, floor.Material)
 
 	middle_shape := geom.DefaultSphere()
 	middle_shape.Translate(-0.5, 1, 0.5)
@@ -62,7 +59,7 @@ func main() {
 	w := world.NewWorldWith(
 		[]rendering.PointLight{light},
 		[]world.Object{
-			floor, left_wall, right_wall, right, middle, right, left,
+			floor, right, middle, right, left,
 		},
 	)
 
