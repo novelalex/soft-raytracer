@@ -35,20 +35,20 @@ func DefaultMaterial() Material {
 	}
 }
 
-func (m Material) Lighting(l PointLight, p, eye, normal Vec3, in_shadow bool) Color {
+func (m Material) Lighting(s geom.Shape, l PointLight, p, eye, normal Vec3, in_shadow bool) Color {
 	ambient := NewColor(0, 0, 0)
 	diffuse := NewColor(0, 0, 0)
 	specular := NewColor(0, 0, 0)
 
 	var color Color
 	if m.Pattern != nil {
-		color = m.Pattern.At(p)
+		color = m.Pattern.AtObject(s, p)
 	} else {
 		color = m.Color
 	}
 
 	effective_color := color.HadamardMult(l.Intensity)
-	
+
 	light_v := l.Position.Sub(p).Normalize()
 	ambient = effective_color.AsVec3().Mult(m.Ambient).AsColor()
 

@@ -18,7 +18,11 @@ func main() {
 	floor := world.NewObject(&floor_shape, rendering.DefaultMaterial())
 
 	pattern := geom.NewStripePattern(nmath.NewColor(1.0, 0, 0), nmath.NewColor(0.5, 0.1, 0.1))
+	pattern.SetTransform(nmath.NewScaling(0.1, 0.1, 0.1))
 	floor.Material.Pattern = &pattern
+
+	pattern2 := geom.NewGradientPattern(nmath.NewColor(1.0, 1.0, 0), nmath.NewColor(0.5, 0.5, 0.1))
+	pattern2.SetTransform(nmath.NewScaling(0.1, 0.1, 0.1))
 
 	// left_wall_shape := geom.DefaultSphere()
 	// left_wall_shape.Translate(0, 0, 5).
@@ -35,9 +39,10 @@ func main() {
 	// right_wall := world.NewObject(&right_wall_shape, floor.Material)
 
 	middle_shape := geom.DefaultSphere()
-	middle_shape.Translate(-0.5, 1, 0.5)
+	middle_shape.Translate(-0.5, 1, 0.5).RotateY(90)
 	middle := world.NewObject(&middle_shape, rendering.DefaultMaterial())
 	middle.Material.Color = nmath.NewColor(0.1, 1, 0.5)
+	middle.Material.Pattern = &pattern2
 	middle.Material.Diffuse = 0.7
 	middle.Material.Specular = 0.3
 
@@ -66,7 +71,7 @@ func main() {
 		},
 	)
 
-	c := camera.NewCamera(300, 300, math.Pi/3.0)
+	c := camera.NewCamera(1920, 1080, math.Pi/3.0)
 	c.Transform = nmath.NewVec3(0, 1.5, -5).
 		LookAt(
 			nmath.NewVec3(0, 1, 0),

@@ -1,8 +1,8 @@
 package geom
 
 import (
-	"math"
 	. "github.com/novelalex/soft-raytracer/pkg/nmath"
+	"math"
 )
 
 type Pattern interface {
@@ -41,4 +41,35 @@ func (s StripePattern) At(point Vec3) Color {
 		return s.A
 	}
 	return s.B
+}
+
+type GradientPattern struct {
+	A  Color
+	B  Color
+	Xf Mat4
+}
+
+func NewGradientPattern(a, b Color) GradientPattern {
+	return GradientPattern{a, b, Mat4Identity()}
+}
+
+func (p GradientPattern) Transform() Mat4 {
+	return p.Xf
+}
+
+func (p *GradientPattern) SetTransform(m Mat4) {
+	p.Xf = m
+}
+
+func (p GradientPattern) AtObject(obj Shape, point Vec3) Color {
+	object_point := obj.Transform().Inverse().MultV(point.AsPoint4())
+	pattern_point := p.Transform().Inverse().MultV(object_point).DropW()
+	return p.At(pattern_point)
+}
+
+func (p GradientPattern) At(point Vec3) Color {
+	distance := p.B.AsVec3().Sub(p.A.AsVec3())
+	fraction := point.X - math.Floor(point.X)
+
+	return p.A.AsVec3().Add(distance.Mult(fraction)).AsColor()
 }

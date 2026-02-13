@@ -71,7 +71,7 @@ func (w *World) ShadeHit(comps geom.IntersectionPrecomputation) nmath.Color {
 		in_shadow := w.IsShadowed(comps.OverPoint, light)
 		shape := comps.Object
 		object := w.LookupShape(shape)
-		l_color := object.Material.Lighting(light, comps.Point, comps.EyeV, comps.NormalV, in_shadow)
+		l_color := object.Material.Lighting(shape, light, comps.Point, comps.EyeV, comps.NormalV, in_shadow)
 		out_color = out_color.Add(l_color)
 	}
 
