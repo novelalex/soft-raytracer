@@ -1,4 +1,4 @@
-package rendering
+package raytracer
 
 import (
 	"math"
@@ -8,12 +8,18 @@ import (
 )
 
 type Material struct {
-	Color                                             Color
-	Ambient, Diffuse, Specular, Shininess, Reflective float64
-	Pattern                                           geom.Pattern
+	Color        Color
+	Ambient      float64
+	Diffuse      float64
+	Specular     float64
+	Shininess    float64
+	Reflective   float64
+	Transparency float64
+	IOR          float64
+	Pattern      geom.Pattern
 }
 
-func NewMaterial(color Color, ambient, diffuse, specular, shininess, reflective float64) Material {
+func NewMaterial(color Color, ambient, diffuse, specular, shininess, reflective, transparency, ior float64) Material {
 	return Material{
 		color,
 		ambient,
@@ -21,6 +27,8 @@ func NewMaterial(color Color, ambient, diffuse, specular, shininess, reflective 
 		specular,
 		shininess,
 		reflective,
+		transparency,
+		ior,
 		nil,
 	}
 }
@@ -33,6 +41,8 @@ func DefaultMaterial() Material {
 		0.9,
 		200.0,
 		0.0,
+		0.0,
+		1.0,
 		nil,
 	}
 }

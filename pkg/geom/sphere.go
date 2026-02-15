@@ -1,30 +1,25 @@
 package geom
 
 import (
+	"math"
+
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
 )
 
 type Sphere struct {
 	Xf nmath.Mat4
-	id uint64
 }
 
 func DefaultSphere() Sphere {
 
 	return Sphere{
 		nmath.Mat4Identity(),
-		newId(),
 	}
 }
 func NewSphere(t nmath.Mat4) Sphere {
 	return Sphere{
 		t,
-		newId(),
 	}
-}
-
-func (s Sphere) ID() uint64 {
-	return s.id
 }
 
 func (s Sphere) Transform() nmath.Mat4 {
@@ -72,6 +67,31 @@ func (s Sphere) NormalAt(world_point nmath.Vec3) nmath.Vec3 {
 	return world_normal.DropW().Normalize()
 }
 
-func (s Sphere) IntersectRay(r Ray) Intersections {
-	return r.IntersectSphere(s)
+func (s Sphere) IntersectRay(ray Ray) []float64 {
+	D := s.Xf.Inverse().MultV(ray.Dir.AsVector4())
+	S := s.Xf.Inverse().MultV(ray.Origin.AsPoint4())
+	C := nmath.NewPoint4(0, 0, 0)
+	r := 1.0
+
+	// this does some extra calculations that are not necessary for unit spheres with ray transformations
+	// but it is a useful refrence if i need real ray sphere intersection
+
+	a := D.Dot(D)
+	b := 2.0*S.Dot(D) - 2.0*D.Dot(C)
+	c := S.Dot(S) - 2.0*S.Dot(C) + C.Dot(C) - r*r
+
+	sol := nmath.Solve(a, b, c)
+
+	if len(sol) == 0 {
+		return []float64{}
+	}
+
+	if len(sol) == 1 {
+		return []float64{sol[0]}
+	}
+
+	t1 := math.Min(sol[0], sol[1])
+	t2 := math.Max(sol[0], sol[1])
+	return []float64{t1, t2}
+
 }

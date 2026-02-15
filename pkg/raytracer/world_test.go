@@ -1,4 +1,4 @@
-package world_test
+package raytracer_test
 
 import (
 	. "github.com/onsi/ginkgo/v2"
@@ -6,13 +6,13 @@ import (
 
 	"github.com/novelalex/soft-raytracer/pkg/geom"
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/world"
+	"github.com/novelalex/soft-raytracer/pkg/raytracer"
 )
 
 var _ = Describe("World", func() {
 	Describe("IntersectRay", func() {
 		It("should return all intersections of the ray with the world", func() {
-			w := world.NewWorld()
+			w := raytracer.NewWorld()
 			r := geom.NewRay(nmath.NewVec3(0, 0, -5), nmath.NewVec3(0, 0, 1))
 			xs := w.IntersectRay(r)
 
@@ -26,25 +26,25 @@ var _ = Describe("World", func() {
 
 	Describe("IsShadowed", func() {
 		It("should return false when nothing is collinear with point and light", func() {
-			w := world.NewWorld()
+			w := raytracer.NewWorld()
 			p := nmath.NewVec3(0, 10, 0)
 			Expect(w.IsShadowed(p, w.Lights[0])).To(BeFalse())
 		})
 
 		It("should return true when an object is between the point and the light", func() {
-			w := world.NewWorld()
+			w := raytracer.NewWorld()
 			p := nmath.NewVec3(10, -10, 10)
 			Expect(w.IsShadowed(p, w.Lights[0])).To(BeTrue())
 		})
 
 		It("should return false when an object is behind the light", func() {
-			w := world.NewWorld()
+			w := raytracer.NewWorld()
 			p := nmath.NewVec3(-20, 20, -20)
 			Expect(w.IsShadowed(p, w.Lights[0])).To(BeFalse())
 		})
 
 		It("should return false when an object is behind the point", func() {
-			w := world.NewWorld()
+			w := raytracer.NewWorld()
 			p := nmath.NewVec3(-2, 2, -2)
 			Expect(w.IsShadowed(p, w.Lights[0])).To(BeFalse())
 		})

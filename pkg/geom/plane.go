@@ -8,26 +8,18 @@ import (
 
 type Plane struct {
 	Xf nmath.Mat4
-	id uint64
 }
 
 func DefaultPlane() Plane {
 	return Plane{
 		nmath.Mat4Identity(),
-		newId(),
 	}
 }
 func NewPlane(t nmath.Mat4) Plane {
 	return Plane{
 		t,
-		newId(),
 	}
 }
-
-func (p Plane) ID() uint64 {
-	return p.id
-}
-
 func (p Plane) Transform() nmath.Mat4 {
 	return p.Xf
 }
@@ -47,14 +39,12 @@ func (p Plane) NormalAt(point nmath.Vec3) nmath.Vec3 {
 	return world_normal.Normalize()
 }
 
-func (p Plane) IntersectRay(r Ray) Intersections {
+func (p Plane) IntersectRay(r Ray) []float64 {
 	ray := r.Transform(p.Xf.Inverse())
 
 	if math.Abs(ray.Dir.Y) < nmath.F64Epsilon {
-		return NewIntersections([]Intersection{})
+		return []float64{}
 	}
 	t := -ray.Origin.Y / ray.Dir.Y
-	return NewIntersections([]Intersection{
-		NewIntersection(t, &p),
-	})
+	return []float64{t}
 }

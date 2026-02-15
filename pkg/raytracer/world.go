@@ -1,19 +1,17 @@
-package world
+package raytracer
 
 import (
 	"github.com/novelalex/soft-raytracer/pkg/geom"
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/rendering"
 )
 
 type World struct {
-	Lights      []rendering.PointLight
-	Objects     []Object
-	shapeLookup map[uint64]*Object
+	Lights  []PointLight
+	Objects []Object
 }
 
 func NewWorld() World {
-	m1 := rendering.DefaultMaterial()
+	m1 := DefaultMaterial()
 	m1.Color = nmath.NewColor(0.8, 1.0, 0.6)
 	m1.Diffuse = 0.7
 	m1.Specular = 0.2
@@ -23,54 +21,41 @@ func NewWorld() World {
 	s2 := geom.NewSphere(t2)
 
 	o1 := NewObject(&s1, m1)
-	o2 := NewObject(&s2, rendering.DefaultMaterial())
+	o2 := NewObject(&s2, DefaultMaterial())
 
 	return World{
-		[]rendering.PointLight{
-			rendering.NewPointLight(nmath.NewVec3(-10, 10, -10), nmath.NewColor(1, 1, 1)),
+		[]PointLight{
+			NewPointLight(nmath.NewVec3(-10, 10, -10), nmath.NewColor(1, 1, 1)),
 		},
 		[]Object{
 			o1, o2,
 		},
-		map[uint64]*Object{},
 	}
 }
 
-func NewWorldWith(lights []rendering.PointLight, objects []Object) World {
+func NewWorldWith(lights []PointLight, objects []Object) World {
 	w := World{
 		lights,
 		objects,
-		map[uint64]*Object{},
 	}
-	w.CreateShapeLookup()
 
 	return w
 }
 
-func (w *World) CreateShapeLookup() {
+func (w *World) IntersectRay(r geom.Ray) Intersections {
+	intersections := Intersections{}
 	for _, o := range w.Objects {
-		w.shapeLookup[uint64(o.Shape.ID())] = &o
-	}
-}
-
-func (w *World) LookupShape(s geom.Shape) *Object {
-	return w.shapeLookup[s.ID()]
-}
-
-func (w *World) IntersectRay(r geom.Ray) geom.Intersections {
-	intersections := geom.Intersections{}
-	for _, o := range w.Objects {
-		intersections = intersections.Merge(o.Shape.IntersectRay(r))
+		intersections = intersections.Merge(o.IntersectRay(r))
 	}
 	return intersections
 }
 
-func (w *World) ShadeHit(comps geom.IntersectionPrecomputation, remaining uint32) nmath.Color {
+func (w *World) ShadeHit(comps IntersectionPrecomputation, remaining uint32) nmath.Color {
 	out_color := nmath.NewColor(0, 0, 0)
 	for _, light := range w.Lights {
 		in_shadow := w.IsShadowed(comps.OverPoint, light)
-		shape := comps.Object
-		object := w.LookupShape(shape)
+		object := comps.Object
+		shape := comps.Shape
 		l_color := object.Material.Lighting(shape, light, comps.Point, comps.EyeV, comps.NormalV, in_shadow)
 		reflect_color := w.ReflectedColor(comps, remaining)
 		out_color = out_color.Add(l_color).Add(reflect_color)
@@ -79,13 +64,12 @@ func (w *World) ShadeHit(comps geom.IntersectionPrecomputation, remaining uint32
 	return out_color
 }
 
-func (w *World) ReflectedColor(comps geom.IntersectionPrecomputation, remaining uint32) nmath.Color {
+func (w *World) ReflectedColor(comps IntersectionPrecomputation, remaining uint32) nmath.Color {
 	out_color := nmath.NewColor(0, 0, 0)
 	if remaining <= 0 {
 		return out_color // BLACK
 	}
-	shape := comps.Object
-	object := w.LookupShape(shape)
+	object := comps.Object
 	if nmath.ApproxEq(object.Material.Reflective, 0.0) {
 		return out_color // BLACK
 	}
@@ -108,7 +92,7 @@ func (w *World) ColorAt(r geom.Ray, remaining uint32) nmath.Color {
 	return color
 }
 
-func (w *World) IsShadowed(p nmath.Vec3, l rendering.PointLight) bool {
+func (w *World) IsShadowed(p nmath.Vec3, l PointLight) bool {
 	v := l.Position.Sub(p)
 	dist := v.Mag()
 	dir := v.Normalize()

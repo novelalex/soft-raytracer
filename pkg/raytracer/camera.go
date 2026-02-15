@@ -1,10 +1,9 @@
-package camera
+package raytracer
 
 import (
 	"github.com/novelalex/soft-raytracer/pkg/geom"
 	"github.com/novelalex/soft-raytracer/pkg/gfx"
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/world"
 )
 
 type Camera struct {
@@ -52,7 +51,7 @@ func (c Camera) RayForPixel(px, py uint) geom.Ray {
 	return geom.NewRay(origin, direction)
 }
 
-func (c *Camera) Render(w world.World) gfx.Canvas {
+func (c *Camera) Render(w World) gfx.Canvas {
 	image := gfx.NewCanvas(c.Width, c.Height)
 	for y := range c.Height - 1 {
 		for x := range c.Width - 1 {

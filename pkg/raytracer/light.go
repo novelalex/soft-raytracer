@@ -1,4 +1,4 @@
-package rendering
+package raytracer
 
 import "github.com/novelalex/soft-raytracer/pkg/nmath"
 

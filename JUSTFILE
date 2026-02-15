@@ -6,7 +6,7 @@ default:
 
 # Run application
 run:
-    go run ./cmd/soft-raytracer > img.ppm
+    go run ./cmd/soft-raytracer
 
 # Build application
 build:

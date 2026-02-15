@@ -1,4 +1,4 @@
-package camera_test
+package raytracer_test
 
 import (
 	"math"
@@ -6,17 +6,16 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/novelalex/soft-raytracer/pkg/camera"
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
-	"github.com/novelalex/soft-raytracer/pkg/world"
+	"github.com/novelalex/soft-raytracer/pkg/raytracer"
 )
 
 var _ = Describe("Camera", func() {
 	Describe("Render", func() {
 		Context("when rendering the world", func() {
 			It("should output the canvis with the world rendered on it", func() {
-				w := world.NewWorld()
-				c := camera.NewCamera(11, 11, math.Pi/2.0)
+				w := raytracer.NewWorld()
+				c := raytracer.NewCamera(11, 11, math.Pi/2.0)
 				from := nmath.NewVec3(0, 0, -5)
 				to := nmath.NewVec3(0, 0, 0)
 				up := nmath.NewVec3(0, 1, 0)

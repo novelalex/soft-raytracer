@@ -1,4 +1,4 @@
-package world_test
+package raytracer_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestWorld(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "World Suite")
+	RunSpecs(t, "Raytracer Suite")
 }

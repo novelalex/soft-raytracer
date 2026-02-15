@@ -1,27 +1,21 @@
-package geom
+package raytracer
 
 import (
 	"sort"
 
+	"github.com/novelalex/soft-raytracer/pkg/geom"
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
 )
 
-type Shape interface {
-	Transform() nmath.Mat4
-	SetTransform(nmath.Mat4)
-	IntersectRay(Ray) Intersections
-	NormalAt(world_point nmath.Vec3) nmath.Vec3
-	ID() uint64
-}
-
 type Intersection struct {
 	T      float64
-	Object Shape
+	Object *Object
 }
 
 type IntersectionPrecomputation struct {
 	T         float64
-	Object    Shape
+	Object    *Object
+	Shape     geom.Shape
 	Point     nmath.Vec3
 	EyeV      nmath.Vec3
 	NormalV   nmath.Vec3
@@ -30,7 +24,7 @@ type IntersectionPrecomputation struct {
 	Inside    bool
 }
 
-func NewIntersection(t float64, object Shape) Intersection {
+func NewIntersection(t float64, object *Object) Intersection {
 	return Intersection{t, object}
 }
 
@@ -43,13 +37,14 @@ func NewIntersections(xs []Intersection) Intersections {
 	return xs
 }
 
-func (xs Intersections) Append(x Intersection) Intersections {
-	xs = append(xs, x)
-	sort.Slice(xs, func(i, j int) bool {
-		return (xs)[i].T < (xs)[j].T
-	})
-	return xs
-}
+// TODO: Something is wrong with this function, use append(xs, x) for now
+// func (xs Intersections) Append(x Intersection) Intersections {
+// 	xs = append(xs, x)
+// 	sort.Slice(xs, func(i, j int) bool {
+// 		return (xs)[i].T < (xs)[j].T
+// 	})
+// 	return xs
+// }
 
 func (xs Intersections) Merge(ys Intersections) Intersections {
 	for i := range ys {
@@ -69,12 +64,12 @@ func (xs Intersections) Hit() (x Intersection, ok bool) {
 		}
 	}
 
-	return NewIntersection(0, &Sphere{}), false
+	return NewIntersection(0, &Object{}), false
 }
 
-func (x Intersection) Precompute(r Ray) IntersectionPrecomputation {
+func (x Intersection) Precompute(r geom.Ray) IntersectionPrecomputation {
 	point := r.At(x.T)
-	normal := x.Object.NormalAt(point)
+	normal := x.Object.Shape.NormalAt(point)
 	eye := r.Dir.Neg()
 	reflect := r.Dir.Reflect(normal)
 	var inside bool
@@ -88,6 +83,7 @@ func (x Intersection) Precompute(r Ray) IntersectionPrecomputation {
 	return IntersectionPrecomputation{
 		T:         x.T,
 		Object:    x.Object,
+		Shape:     x.Object.Shape,
 		Point:     point,
 		EyeV:      eye,
 		NormalV:   normal,

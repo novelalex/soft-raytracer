@@ -1,8 +1,6 @@
 package geom
 
 import (
-	"math"
-
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
 )
 
@@ -52,38 +50,4 @@ func (r Ray) RotateY(angle float64) Ray {
 
 func (r Ray) RotateZ(angle float64) Ray {
 	return r.Transform(nmath.NewRotationZ(angle))
-}
-
-func (ray Ray) IntersectSphere(s Sphere) Intersections {
-	D := s.Xf.Inverse().MultV(ray.Dir.AsVector4())
-	S := s.Xf.Inverse().MultV(ray.Origin.AsPoint4())
-	C := nmath.NewPoint4(0, 0, 0)
-	r := 1.0
-
-	// this does some extra calculations that are not necessary for unit spheres with ray transformations
-	// but it is a useful refrence if i need real ray sphere intersection
-
-	a := D.Dot(D)
-	b := 2.0*S.Dot(D) - 2.0*D.Dot(C)
-	c := S.Dot(S) - 2.0*S.Dot(C) + C.Dot(C) - r*r
-
-	sol := nmath.Solve(a, b, c)
-
-	if len(sol) == 0 {
-		return NewIntersections([]Intersection{})
-	}
-
-	if len(sol) == 1 {
-		return NewIntersections([]Intersection{
-			NewIntersection(sol[0], &s),
-		})
-	}
-
-	t1 := math.Min(sol[0], sol[1])
-	t2 := math.Max(sol[0], sol[1])
-	return NewIntersections([]Intersection{
-		NewIntersection(t1, &s),
-		NewIntersection(t2, &s),
-	})
-
 }
