@@ -57,7 +57,7 @@ func (c *Camera) Render(w world.World) gfx.Canvas {
 	for y := range c.Height - 1 {
 		for x := range c.Width - 1 {
 			ray := c.RayForPixel(x, y)
-			color := w.ColorAt(ray)
+			color := w.ColorAt(ray, 5)
 			image.WritePixel(x, y, color)
 		}
 	}

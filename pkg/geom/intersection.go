@@ -25,6 +25,7 @@ type IntersectionPrecomputation struct {
 	Point     nmath.Vec3
 	EyeV      nmath.Vec3
 	NormalV   nmath.Vec3
+	ReflectV  nmath.Vec3
 	OverPoint nmath.Vec3
 	Inside    bool
 }
@@ -75,6 +76,7 @@ func (x Intersection) Precompute(r Ray) IntersectionPrecomputation {
 	point := r.At(x.T)
 	normal := x.Object.NormalAt(point)
 	eye := r.Dir.Neg()
+	reflect := r.Dir.Reflect(normal)
 	var inside bool
 	if normal.Dot(eye) < 0 {
 		inside = true
@@ -89,6 +91,7 @@ func (x Intersection) Precompute(r Ray) IntersectionPrecomputation {
 		Point:     point,
 		EyeV:      eye,
 		NormalV:   normal,
+		ReflectV:  reflect,
 		OverPoint: over_point,
 		Inside:    inside,
 	}

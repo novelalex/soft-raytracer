@@ -1,8 +1,9 @@
 package geom
 
 import (
-	. "github.com/novelalex/soft-raytracer/pkg/nmath"
 	"math"
+
+	. "github.com/novelalex/soft-raytracer/pkg/nmath"
 )
 
 type Pattern interface {
@@ -72,4 +73,66 @@ func (p GradientPattern) At(point Vec3) Color {
 	fraction := point.X - math.Floor(point.X)
 
 	return p.A.AsVec3().Add(distance.Mult(fraction)).AsColor()
+}
+
+type RingPattern struct {
+	A  Color
+	B  Color
+	Xf Mat4
+}
+
+func NewRingPattern(a, b Color) RingPattern {
+	return RingPattern{a, b, Mat4Identity()}
+}
+
+func (p RingPattern) Transform() Mat4 {
+	return p.Xf
+}
+
+func (p *RingPattern) SetTransform(m Mat4) {
+	p.Xf = m
+}
+
+func (p RingPattern) AtObject(obj Shape, point Vec3) Color {
+	object_point := obj.Transform().Inverse().MultV(point.AsPoint4())
+	pattern_point := p.Transform().Inverse().MultV(object_point).DropW()
+	return p.At(pattern_point)
+}
+
+func (p RingPattern) At(point Vec3) Color {
+	if math.Mod(math.Floor(math.Sqrt(point.X*point.X+point.Z*point.Z)), 2.0) == 0 {
+		return p.A
+	}
+	return p.B
+}
+
+type CheckerPattern struct {
+	A  Color
+	B  Color
+	Xf Mat4
+}
+
+func NewCheckerPattern(a, b Color) CheckerPattern {
+	return CheckerPattern{a, b, Mat4Identity()}
+}
+
+func (p CheckerPattern) Transform() Mat4 {
+	return p.Xf
+}
+
+func (p *CheckerPattern) SetTransform(m Mat4) {
+	p.Xf = m
+}
+
+func (p CheckerPattern) AtObject(obj Shape, point Vec3) Color {
+	object_point := obj.Transform().Inverse().MultV(point.AsPoint4())
+	pattern_point := p.Transform().Inverse().MultV(object_point).DropW()
+	return p.At(pattern_point)
+}
+
+func (p CheckerPattern) At(point Vec3) Color {
+	if math.Mod(math.Floor(point.X)+math.Floor(point.Y)+math.Floor(point.Z), 2.0) == 0 {
+		return p.A
+	}
+	return p.B
 }

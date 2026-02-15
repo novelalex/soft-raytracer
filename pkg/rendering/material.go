@@ -8,18 +8,19 @@ import (
 )
 
 type Material struct {
-	Color                                 Color
-	Ambient, Diffuse, Specular, Shininess float64
-	Pattern                               geom.Pattern
+	Color                                             Color
+	Ambient, Diffuse, Specular, Shininess, Reflective float64
+	Pattern                                           geom.Pattern
 }
 
-func NewMaterial(color Color, ambient, diffuse, specular, shininess float64) Material {
+func NewMaterial(color Color, ambient, diffuse, specular, shininess, reflective float64) Material {
 	return Material{
 		color,
 		ambient,
 		diffuse,
 		specular,
 		shininess,
+		reflective,
 		nil,
 	}
 }
@@ -31,6 +32,7 @@ func DefaultMaterial() Material {
 		0.9,
 		0.9,
 		200.0,
+		0.0,
 		nil,
 	}
 }

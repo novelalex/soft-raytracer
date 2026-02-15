@@ -1,3 +1,7 @@
+Reflections (so shiny) - Feb 15th 2026, 1:10 AM:
+
+![3 Spheres on a shiny floor](renders/reflection.png)
+
 Patterns! (some refactoring was done) - Feb 13th 2026, 12:10 AM:
 
 ![3 Spheres on a striped floor](renders/pattern.png)

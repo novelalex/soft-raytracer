@@ -65,20 +65,37 @@ func (w *World) IntersectRay(r geom.Ray) geom.Intersections {
 	return intersections
 }
 
-func (w *World) ShadeHit(comps geom.IntersectionPrecomputation) nmath.Color {
+func (w *World) ShadeHit(comps geom.IntersectionPrecomputation, remaining uint32) nmath.Color {
 	out_color := nmath.NewColor(0, 0, 0)
 	for _, light := range w.Lights {
 		in_shadow := w.IsShadowed(comps.OverPoint, light)
 		shape := comps.Object
 		object := w.LookupShape(shape)
 		l_color := object.Material.Lighting(shape, light, comps.Point, comps.EyeV, comps.NormalV, in_shadow)
-		out_color = out_color.Add(l_color)
+		reflect_color := w.ReflectedColor(comps, remaining)
+		out_color = out_color.Add(l_color).Add(reflect_color)
 	}
 
 	return out_color
 }
 
-func (w *World) ColorAt(r geom.Ray) nmath.Color {
+func (w *World) ReflectedColor(comps geom.IntersectionPrecomputation, remaining uint32) nmath.Color {
+	out_color := nmath.NewColor(0, 0, 0)
+	if remaining <= 0 {
+		return out_color // BLACK
+	}
+	shape := comps.Object
+	object := w.LookupShape(shape)
+	if nmath.ApproxEq(object.Material.Reflective, 0.0) {
+		return out_color // BLACK
+	}
+	reflect_ray := geom.NewRay(comps.OverPoint, comps.ReflectV)
+	out_color = w.ColorAt(reflect_ray, remaining-1)
+
+	return out_color.AsVec3().Mult(object.Material.Reflective).AsColor()
+}
+
+func (w *World) ColorAt(r geom.Ray, remaining uint32) nmath.Color {
 	xs := w.IntersectRay(r)
 	hit, ok := xs.Hit()
 	if !ok {
@@ -86,7 +103,7 @@ func (w *World) ColorAt(r geom.Ray) nmath.Color {
 	}
 
 	precomp := hit.Precompute(r)
-	color := w.ShadeHit(precomp)
+	color := w.ShadeHit(precomp, remaining)
 
 	return color
 }
