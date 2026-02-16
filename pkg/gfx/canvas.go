@@ -41,6 +41,29 @@ func (c Canvas) constructPPMHeader() string {
 	return fmt.Sprintf("P3\n%d %d\n255\n", c.width, c.height)
 }
 
+func (c Canvas) constructP6PPMHeader() []byte {
+	return []byte(fmt.Sprintf("P6\n%d %d\n255\n", c.width, c.height))
+}
+
+func (c Canvas) constructP6PPMBody() []byte {
+	result := []byte{}
+	for _, color := range c.buffer {
+		for i := range 3 {
+			cc := uint8(math.Max(0, math.Min(math.Round(color.At(i)*255), 255)))
+			result = append(result, byte(cc))
+		}
+	}
+
+	return result
+}
+
+func (c Canvas) AsP6PPM() []byte {
+	result := []byte{}
+	result = append(result, c.constructP6PPMHeader()...)
+	result = append(result, c.constructP6PPMBody()...)
+	return result
+}
+
 func (c Canvas) constructPPMBody() string {
 	var sb strings.Builder
 	width_counter := 0

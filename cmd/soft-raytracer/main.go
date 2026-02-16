@@ -86,7 +86,7 @@ func main() {
 	fmt.Println("Rendered", pixel_count, "pixels in", elapsed_time)
 
 	//fmt.Fprint(os.Stdout, canvas.AsPPM())
-	err := os.WriteFile("img.ppm", []byte(canvas.AsPPM()), 0644)
+	err := os.WriteFile("img.ppm", canvas.AsP6PPM(), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
