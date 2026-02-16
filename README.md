@@ -1,3 +1,7 @@
+Refraction (so transparent) - Feb 15th 2026, 7:11 PM:
+
+![A Glass Sphere](renders/glass.png)
+
 Reflections (so shiny) - Feb 15th 2026, 1:10 AM:
 
 ![3 Spheres on a shiny floor](renders/reflection.png)

@@ -36,11 +36,11 @@ func main() {
 	wall.Material.Shininess = 4
 
 	middle_shape := geom.DefaultSphere()
-	middle_shape.Translate(-0.5, 1, 0.5)
+	middle_shape.Translate(-1.5, 1, 0.5)
 	middle := NewObject(&middle_shape, DefaultMaterial())
 	middle.Material.Diffuse = 0.7
 	middle.Material.Specular = 0.3
-	middle.Material.Reflective = 1
+	middle.Material.Reflective = 0
 
 	right_shape := geom.DefaultSphere()
 	right_shape.Translate(1.4, 0.5, -0.4).
@@ -52,14 +52,15 @@ func main() {
 	right.Material.Reflective = 1
 
 	left_shape := geom.DefaultSphere()
-	left_shape.Translate(-1.5, 0.33, -0.75).
-		Scale(0.33, 0.33, 0.33)
+	left_shape.Translate(-0.5, 1, -2.5)
 	left := NewObject(&left_shape, DefaultMaterial())
-	left.Material.Color = nmath.NewColor(1, 0.8, 0.1)
+	left.Material.Color = nmath.NewColor(0, 0, 0)
 	left.Material.Diffuse = 0.7
 	left.Material.Specular = 0.3
+	left.Material.Transparency = 1.0
+	left.Material.IOR = 1.5
 
-	light := NewPointLight(nmath.NewVec3(-5, 2, -10), nmath.NewColor(1, 1, 1))
+	light := NewPointLight(nmath.NewVec3(-10, 2, -10), nmath.NewColor(1, 1, 1))
 
 	w := NewWorldWith(
 		[]PointLight{light},
@@ -69,7 +70,7 @@ func main() {
 	)
 
 	c := NewCamera(600, 600, math.Pi/3.0)
-	c.Transform = nmath.NewVec3(0, 1.5, -5).
+	c.Transform = nmath.NewVec3(0, 1.5, -7).
 		LookAt(
 			nmath.NewVec3(0, 1, 0),
 			nmath.NewVec3(0, 1, 0),

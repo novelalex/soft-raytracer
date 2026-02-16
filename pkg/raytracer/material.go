@@ -47,7 +47,7 @@ func DefaultMaterial() Material {
 	}
 }
 
-func (m Material) Lighting(s geom.Shape, l PointLight, p, eye, normal Vec3, in_shadow bool) Color {
+func (m Material) Lighting(s geom.Shape, l PointLight, p, eye, normal Vec3, in_shadow bool, shadow_strength float64) Color {
 	ambient := NewColor(0, 0, 0)
 	diffuse := NewColor(0, 0, 0)
 	specular := NewColor(0, 0, 0)
@@ -65,7 +65,7 @@ func (m Material) Lighting(s geom.Shape, l PointLight, p, eye, normal Vec3, in_s
 	ambient = effective_color.AsVec3().Mult(m.Ambient).AsColor()
 
 	if in_shadow {
-		return ambient
+		return ambient.AsVec3().Mult(shadow_strength).AsColor()
 	}
 
 	light_dot_normal := light_v.Dot(normal)
