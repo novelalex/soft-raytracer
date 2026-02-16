@@ -35,8 +35,8 @@ func main() {
 	wall.Material.Specular = 0.4
 	wall.Material.Shininess = 4
 
-	middle_shape := geom.DefaultSphere()
-	middle_shape.Translate(-1.5, 1, 0.5)
+	middle_shape := geom.DefaultCube()
+	middle_shape.RotateY(45*math.Pi/180.0).Translate(-1.5, 1, 0.5)
 	middle := NewObject(&middle_shape, DefaultMaterial())
 	middle.Material.Diffuse = 0.7
 	middle.Material.Specular = 0.3
@@ -52,7 +52,8 @@ func main() {
 	right.Material.Reflective = 1
 
 	left_shape := geom.DefaultSphere()
-	left_shape.Translate(-0.5, 1, -2.5)
+	left_shape.Translate(-0.5, 1, -2.5).
+		Scale(0.5, 0.5, 0.5)
 	left := NewObject(&left_shape, DefaultMaterial())
 	left.Material.Color = nmath.NewColor(0, 0, 0)
 	left.Material.Diffuse = 0.7
@@ -69,7 +70,7 @@ func main() {
 		},
 	)
 
-	c := NewCamera(1920, 1080, math.Pi/3.0)
+	c := NewCamera(600, 600, math.Pi/3.0)
 	c.Transform = nmath.NewVec3(0, 1.5, -7).
 		LookAt(
 			nmath.NewVec3(0, 1, 0),
