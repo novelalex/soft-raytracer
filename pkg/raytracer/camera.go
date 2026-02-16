@@ -60,26 +60,15 @@ func (c *Camera) Render(w World) gfx.Canvas {
 	jobs := make(chan renderWorkerJob, c.Width*c.Height)
 	results := make(chan renderWorkerResult, c.Width*c.Height)
 
-	numWorkers := runtime.NumCPU()
+	num_workers := runtime.NumCPU()
 	var wg sync.WaitGroup
-	for i := 0; i < numWorkers; i++ {
+	for i := 0; i < num_workers; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			render_worker(jobs, results)
+			renderWorker(jobs, results)
 		}()
 	}
-
-	// for y := range c.Height - 1 {
-	// 	for x := range c.Width - 1 {
-	// 		jobs <- renderWorkerJob{
-	// 			c, w, x, y,
-	// 		}
-	// 		ray := c.RayForPixel(x, y)
-	// 		color := w.ColorAt(ray, 5)
-	// 		image.WritePixel(x, y, color)
-	// 	}
-	// }
 
 	for y := range c.Height {
 		for x := range c.Width {
@@ -113,7 +102,7 @@ type renderWorkerResult struct {
 	Y uint
 }
 
-func render_worker(jobs <-chan renderWorkerJob, results chan<- renderWorkerResult) {
+func renderWorker(jobs <-chan renderWorkerJob, results chan<- renderWorkerResult) {
 	for job := range jobs {
 		ray := job.C.RayForPixel(job.X, job.Y)
 		color := job.W.ColorAt(ray, 5)
