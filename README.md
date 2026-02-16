@@ -1,3 +1,7 @@
+Cubes (so blocky) - Feb 16th 2026, 12:03 AM:
+
+![A Cube](renders/cube.png)
+
 Refraction (so transparent) - Feb 15th 2026, 7:11 PM:
 
 ![A Glass Sphere](renders/glass.png)
