@@ -69,7 +69,7 @@ func main() {
 		},
 	)
 
-	c := NewCamera(600, 600, math.Pi/3.0)
+	c := NewCamera(1920, 1080, math.Pi/3.0)
 	c.Transform = nmath.NewVec3(0, 1.5, -7).
 		LookAt(
 			nmath.NewVec3(0, 1, 0),

@@ -1,6 +1,9 @@
 package raytracer
 
 import (
+	"runtime"
+	"sync"
+
 	"github.com/novelalex/soft-raytracer/pkg/geom"
 	"github.com/novelalex/soft-raytracer/pkg/gfx"
 	"github.com/novelalex/soft-raytracer/pkg/nmath"
@@ -53,13 +56,69 @@ func (c Camera) RayForPixel(px, py uint) geom.Ray {
 
 func (c *Camera) Render(w World) gfx.Canvas {
 	image := gfx.NewCanvas(c.Width, c.Height)
-	for y := range c.Height - 1 {
-		for x := range c.Width - 1 {
-			ray := c.RayForPixel(x, y)
-			color := w.ColorAt(ray, 5)
-			image.WritePixel(x, y, color)
+
+	jobs := make(chan renderWorkerJob, c.Width*c.Height)
+	results := make(chan renderWorkerResult, c.Width*c.Height)
+
+	numWorkers := runtime.NumCPU()
+	var wg sync.WaitGroup
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			render_worker(jobs, results)
+		}()
+	}
+
+	// for y := range c.Height - 1 {
+	// 	for x := range c.Width - 1 {
+	// 		jobs <- renderWorkerJob{
+	// 			c, w, x, y,
+	// 		}
+	// 		ray := c.RayForPixel(x, y)
+	// 		color := w.ColorAt(ray, 5)
+	// 		image.WritePixel(x, y, color)
+	// 	}
+	// }
+
+	for y := range c.Height {
+		for x := range c.Width {
+			jobs <- renderWorkerJob{c, w, x, y}
 		}
+	}
+	close(jobs)
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for result := range results {
+		image.WritePixel(result.X, result.Y, result.C)
 	}
 
 	return image
+}
+
+type renderWorkerJob struct {
+	C *Camera
+	W World
+	X uint
+	Y uint
+}
+
+type renderWorkerResult struct {
+	C nmath.Color
+	X uint
+	Y uint
+}
+
+func render_worker(jobs <-chan renderWorkerJob, results chan<- renderWorkerResult) {
+	for job := range jobs {
+		ray := job.C.RayForPixel(job.X, job.Y)
+		color := job.W.ColorAt(ray, 5)
+		results <- renderWorkerResult{
+			color, job.X, job.Y,
+		}
+	}
 }
